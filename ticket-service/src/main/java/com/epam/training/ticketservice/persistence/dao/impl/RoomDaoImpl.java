@@ -18,17 +18,17 @@ public class RoomDaoImpl implements RoomDao {
     private RoomRepository roomRepository;
 
     @Override
-    public int create(Room object) {
+    public int create(Room room) {
         return 0;
     }
 
     @Override
-    public void update(Room object) {
+    public void update(Room objroomect) {
 
     }
 
     @Override
-    public void delete(Room object) {
+    public void delete(Room room) {
 
     }
 
