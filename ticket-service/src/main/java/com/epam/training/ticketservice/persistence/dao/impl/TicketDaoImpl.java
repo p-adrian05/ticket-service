@@ -18,8 +18,7 @@ public class TicketDaoImpl implements TicketDao {
 
 
     @Override
-    public int create(Ticket ticket) {
-        return 0;
+    public void create(Ticket ticket) {
     }
 
     @Override

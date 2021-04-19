@@ -19,8 +19,8 @@ public class ScreeningDaoImpl implements ScreeningDao {
    private AccountRepository accountRepository;
 
     @Override
-    public int create(Screening screening) {
-        return 0;
+    public void create(Screening screening) {
+
     }
 
     @Override

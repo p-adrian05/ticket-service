@@ -16,8 +16,8 @@ public class PriceDaoImpl implements PriceDao {
 
 
     @Override
-    public int create(Price price) {
-        return 0;
+    public void create(Price price) {
+
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.epam.training.ticketservice.persistence.dao.MovieDao;
 import com.epam.training.ticketservice.model.Movie;
 import com.epam.training.ticketservice.persistence.entity.GenreEntity;
 import com.epam.training.ticketservice.persistence.entity.MovieEntity;
+import com.epam.training.ticketservice.persistence.exceptions.MovieAlreadyExistsException;
 import com.epam.training.ticketservice.persistence.exceptions.UnknownMovieException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,11 @@ public class MovieDaoImpl implements MovieDao {
 
 
     @Override
-    public int create(Movie movie) {
+    public void create(Movie movie) throws MovieAlreadyExistsException {
         Objects.requireNonNull(movie, "Movie is a mandatory parameter");
+        if(movieRepository.existsMovieEntityByTitle(movie.getTitle())){
+            throw new MovieAlreadyExistsException(String.format("Movie already exists with title: %s",movie.getTitle()));
+        }
         log.debug("Creating new Movie : {}",movie);
         MovieEntity movieEntity = MovieEntity.builder()
                 .genreEntity(queryGenre(movie.getGenre()))
@@ -39,7 +43,6 @@ public class MovieDaoImpl implements MovieDao {
                 .build();
         int id =  movieRepository.save(movieEntity).getId();
         log.debug("Created movie id is : {}",id);
-        return id;
     }
 
     @Override

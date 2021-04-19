@@ -25,8 +25,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public int create(User object) {
-        return 0;
+    public void  create(User object) {
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface MovieRepository extends CrudRepository<MovieEntity,Integer> {
 
     Optional<MovieEntity> findMovieEntityByTitle(String title);
+    boolean existsMovieEntityByTitle(String title);
 
     @Override
     @Query(value = "SELECT m FROM MovieEntity m join fetch m.genreEntity")
