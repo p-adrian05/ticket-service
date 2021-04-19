@@ -28,9 +28,11 @@ public class MovieDaoImpl implements MovieDao {
 
     private final GenreRepository genreRepository;
 
+    private final EntityQuery entityQuery;
+
 
     @Override
-    public void create(Movie movie) throws MovieAlreadyExistsException {
+    public void createMovie(Movie movie) throws MovieAlreadyExistsException {
         Objects.requireNonNull(movie, "Movie is a mandatory parameter");
         if(movieRepository.existsMovieEntityByTitle(movie.getTitle())){
             throw new MovieAlreadyExistsException(String.format("Movie already exists with title: %s",movie.getTitle()));
@@ -46,9 +48,9 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     @Override
-    public void update(Movie movie) throws UnknownMovieException {
+    public void updateMovie(Movie movie) throws UnknownMovieException {
         Objects.requireNonNull(movie, "Movie is a mandatory parameter");
-        MovieEntity oldMovieEntity = queryMovie(movie.getTitle());
+        MovieEntity oldMovieEntity = entityQuery.queryMovie(movie.getTitle());
         MovieEntity updatedMovieEntity = MovieEntity.builder()
                 .genreEntity(queryGenre(movie.getGenre()))
                 .duration(movie.getDuration())
@@ -60,15 +62,14 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     @Override
-    public void delete(Movie movie) throws UnknownMovieException {
-        Objects.requireNonNull(movie, "Movie is a mandatory parameter");
-        MovieEntity movieEntity = queryMovie(movie.getTitle());
+    public void deleteMovie(String title) throws UnknownMovieException {
+        MovieEntity movieEntity = entityQuery.queryMovie(title);
         movieRepository.delete(movieEntity);
         log.debug("Deleted Movie {}",movieEntity);
     }
 
     @Override
-    public Collection<Movie> readAll() {
+    public Collection<Movie> readAllMovies() {
         return StreamSupport.stream(movieRepository.findAll().spliterator(),true)
                 .map(movieEntity -> Movie.builder().duration(movieEntity.getDuration())
                                     .genre(movieEntity.getGenreEntity().getName())
@@ -79,12 +80,5 @@ public class MovieDaoImpl implements MovieDao {
     protected GenreEntity queryGenre(String name){
         Optional<GenreEntity> genreEntityOptional = genreRepository.findGenreEntityByName(name);
         return genreEntityOptional.orElseGet(() -> genreRepository.save(GenreEntity.builder().name(name).build()));
-    }
-    protected MovieEntity queryMovie(String title) throws UnknownMovieException {
-        Optional<MovieEntity> movieEntityOptional = movieRepository.findMovieEntityByTitle(title);
-        if(movieEntityOptional.isEmpty()){
-            throw new UnknownMovieException(String.format("Movie not found with title: %s",title));
-        }
-        return movieEntityOptional.get();
     }
 }

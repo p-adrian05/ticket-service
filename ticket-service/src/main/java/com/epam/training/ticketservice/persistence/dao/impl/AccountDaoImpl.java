@@ -11,35 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.Optional;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Repository
 public class AccountDaoImpl implements AccountDao {
 
 
-   private AccountRepository accountRepository;
+        @Override
+        public Optional<User> getUserByName(String username) {
+            return Optional.empty();
+        }
 
-    @Override
-    public Optional<User> getUserByName(String username) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void  create(User object) {
-    }
-
-    @Override
-    public void update(User object) {
-
-    }
-
-    @Override
-    public void delete(User object) {
-
-    }
-
-    @Override
-    public Collection<User> readAll() {
-        return null;
-    }
 }

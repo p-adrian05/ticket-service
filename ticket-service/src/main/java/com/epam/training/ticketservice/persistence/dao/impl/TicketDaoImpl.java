@@ -7,32 +7,13 @@ import com.epam.training.ticketservice.persistence.dao.ScreeningDao;
 import com.epam.training.ticketservice.persistence.dao.TicketDao;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Repository
 public class TicketDaoImpl implements TicketDao {
 
-
-    @Override
-    public void create(Ticket ticket) {
-    }
-
-    @Override
-    public void update(Ticket ticket) {
-
-    }
-
-    @Override
-    public void delete(Ticket ticket) {
-
-    }
-
-    @Override
-    public Collection<Ticket> readAll() {
-        return null;
-    }
 }

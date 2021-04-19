@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,8 +22,10 @@ public class RoomDaoImpl implements RoomDao {
 
     private final RoomRepository roomRepository;
 
+    private final EntityQuery entityQuery;
+
     @Override
-    public void create(Room room) throws RoomAlreadyExistsException {
+    public void createRoom(Room room) throws RoomAlreadyExistsException {
         Objects.requireNonNull(room, "Room is a mandatory parameter");
         if(roomRepository.existsByName(room.getName())){
             throw new RoomAlreadyExistsException(String.format("Room already exists with name: %s",room.getName()));
@@ -40,9 +41,9 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     @Override
-    public void update(Room room) throws UnknownRoomException {
+    public void updateRoom(Room room) throws UnknownRoomException {
         Objects.requireNonNull(room, "Room is a mandatory parameter");
-        RoomEntity oldRoomEntity = queryRoom(room.getName());
+        RoomEntity oldRoomEntity = entityQuery.queryRoom(room.getName());
         RoomEntity updatedRoomEntity = RoomEntity.builder()
                 .columns(room.getColumns())
                 .name(room.getName())
@@ -54,15 +55,14 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     @Override
-    public void delete(Room room) throws UnknownRoomException {
-        Objects.requireNonNull(room, "Room is a mandatory parameter");
-        RoomEntity roomEntity = queryRoom(room.getName());
+    public void deleteRoom(String name) throws UnknownRoomException {
+        RoomEntity roomEntity = entityQuery.queryRoom(name);
         roomRepository.delete(roomEntity);
         log.debug("Deleted Room {}",roomEntity);
     }
 
     @Override
-    public Collection<Room> readAll() {
+    public Collection<Room> readAllRooms() {
         return StreamSupport.stream(roomRepository.findAll().spliterator(),true)
                 .map(roomEntity -> Room.builder()
                         .columns(roomEntity.getColumns())
@@ -71,11 +71,5 @@ public class RoomDaoImpl implements RoomDao {
                         .build())
                 .collect(Collectors.toList());
     }
-    protected RoomEntity queryRoom(String name) throws UnknownRoomException {
-        Optional<RoomEntity> roomEntityOptional= roomRepository.findByName(name);
-        if(roomEntityOptional.isEmpty()){
-            throw new UnknownRoomException(String.format("Room is not found with name: %s",name));
-        }
-        return roomEntityOptional.get();
-    }
+
 }
