@@ -12,6 +12,7 @@ public interface ScreeningRepository extends JpaRepository<ScreeningEntity, Inte
 
 
     Optional<ScreeningEntity> findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(String movieTitle, String roomName, LocalDateTime time);
+    List<ScreeningEntity> findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(String roomName,LocalDateTime startTime,LocalDateTime endTime);
 
 
     @Override

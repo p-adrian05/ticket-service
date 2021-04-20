@@ -13,7 +13,6 @@ import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -44,7 +43,7 @@ public class ScreeningServiceImpl implements ScreeningService {
         if(movieEntity.isPresent() && roomEntity.isPresent()){
             LocalDateTime newStart = screeningDto.getTime();
             LocalDateTime newEnd = screeningDto.getTime().plusMinutes(movieEntity.get().getDuration());
-            if(isFreeToScreen(roomEntity.get().getScreenings(),newStart,newEnd)){
+            if(isFreeToScreen(screeningDto.getRoomName(),newStart,newEnd)){
                 log.debug("Creating new Screening : {}",screeningDto);
                 int id =  screeningRepository.save(ScreeningEntity.builder()
                         .movieEntity(movieEntity.get())
@@ -61,11 +60,13 @@ public class ScreeningServiceImpl implements ScreeningService {
         }
     }
 
-     private boolean isFreeToScreen(List<ScreeningEntity> screenings,LocalDateTime newStart, LocalDateTime newEnd) throws ScreeningCreationException{
-        if(screenings.size()==0){
+     private boolean isFreeToScreen(String roomName,LocalDateTime newStart, LocalDateTime newEnd) throws ScreeningCreationException{
+        List<ScreeningEntity> nearScreenings = screeningRepository
+                .findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(roomName,newStart.minusDays(1),newEnd.plusMinutes(1));
+        if(nearScreenings.size()==0){
             return true;
         }
-        for(ScreeningEntity screeningEntity : screenings){
+        for(ScreeningEntity screeningEntity : nearScreenings){
             if(!isOverlap(screeningEntity.getStartTime(),screeningEntity.getEndTime(),newStart,newEnd)){
                 if(Math.abs(Duration.between(newStart,screeningEntity.getEndTime()).toMinutes())<=10 ||
                         Math.abs(Duration.between(newEnd,screeningEntity.getStartTime()).toMinutes())<=10 ){

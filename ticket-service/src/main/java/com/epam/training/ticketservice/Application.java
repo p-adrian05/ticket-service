@@ -37,7 +37,7 @@ public class Application   implements CommandLineRunner {
 //
 //        MovieDto movieDto = MovieDto.builder()
 //                .title("Test")
-//                .duration(123)
+//                .duration(60)
 //                .genre("Akcio")
 //                .build();
 //
@@ -48,13 +48,13 @@ public class Application   implements CommandLineRunner {
 //        ScreeningDto screeningDto = ScreeningDto.builder()
 //                .movieName("Test")
 //                .roomName("TestRoom")
-//                .time(LocalDateTime.of(2021,4,20,12,32))
+//                .time(LocalDateTime.of(2021,4,20,12,30))
 //                .build();
 //        screeningService.createScreening(screeningDto);
-//        screeningDto.setTime(LocalDateTime.of(2021,4,20,17,32));
+//        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
 //        screeningService.createScreening(screeningDto);
 //        movieService.deleteMovie("Test");
-//
+
 
 
     }
