@@ -51,7 +51,6 @@ public class MovieEntity {
 
     @OneToMany(
             mappedBy = "movieEntity",
-            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<ScreeningEntity> screenings = new LinkedList<>();

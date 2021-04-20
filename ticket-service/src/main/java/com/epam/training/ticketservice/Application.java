@@ -50,8 +50,12 @@ public class Application   implements CommandLineRunner {
 //                .roomName("TestRoom")
 //                .time(LocalDateTime.of(2021,4,20,12,32))
 //                .build();
-//
 //        screeningService.createScreening(screeningDto);
+//        screeningDto.setTime(LocalDateTime.of(2021,4,20,17,32));
+//        screeningService.createScreening(screeningDto);
+//        movieService.deleteMovie("Test");
+//
+
 
     }
 }

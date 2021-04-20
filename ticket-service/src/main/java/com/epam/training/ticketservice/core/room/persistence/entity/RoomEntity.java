@@ -38,7 +38,6 @@ public class RoomEntity {
 
     @OneToMany(
             mappedBy = "roomEntity",
-            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<ScreeningEntity> screenings = new LinkedList<>();

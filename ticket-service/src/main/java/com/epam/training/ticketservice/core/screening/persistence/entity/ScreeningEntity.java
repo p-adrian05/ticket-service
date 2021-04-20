@@ -8,7 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +33,10 @@ public class ScreeningEntity {
     private RoomEntity roomEntity;
 
     @Column
-    private LocalDateTime time;
+    private LocalDateTime startTime;
+
+    @Column
+    private LocalDateTime endTime;
 
     @ManyToMany
     @JoinTable(name = "screening_prices",
@@ -47,7 +49,6 @@ public class ScreeningEntity {
 
     @OneToMany(
             mappedBy = "screeningEntity",
-            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<TicketEntity> tickets = new LinkedList<>();
