@@ -18,7 +18,7 @@ public class GenreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
     @Column(name = "genre",unique = true)
     private String name;

@@ -17,7 +17,7 @@ public class MovieEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
     @Column(unique = true)
     private String title;
@@ -36,7 +36,7 @@ public class MovieEntity {
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<PriceEntity> moviePrices;
+    private Set<PriceEntity> moviePrices = new HashSet<>();
 
 
     public void addPrice(PriceEntity priceEntity) {
@@ -49,9 +49,9 @@ public class MovieEntity {
         priceEntity.getMovies().remove(this);
     }
 
-    @OneToMany(
-            mappedBy = "movieEntity",
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "movieEntity", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<ScreeningEntity> screenings = new LinkedList<>();
+
 }

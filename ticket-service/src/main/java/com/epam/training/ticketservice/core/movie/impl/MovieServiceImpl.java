@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +32,8 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public void createMovie(MovieDto movie) throws MovieAlreadyExistsException {
         Objects.requireNonNull(movie, "Movie cannot be null");
+        Objects.requireNonNull(movie.getTitle(), "Movie title cannot be null");
+        Objects.requireNonNull(movie.getDuration(), "Movie duration cannot be null");
         if(movieRepository.existsMovieEntityByTitle(movie.getTitle())){
             throw new MovieAlreadyExistsException(String.format("Movie already exists with title: %s",movie.getTitle()));
         }
@@ -41,14 +43,16 @@ public class MovieServiceImpl implements MovieService {
                 .duration(movie.getDuration())
                 .title(movie.getTitle())
                 .build();
-        int id =  movieRepository.save(movieEntity).getId();
-        log.debug("Created movie id is : {}",id);
+        MovieEntity createdMovie = movieRepository.save(movieEntity);
+        log.debug("Created movie is : {}",createdMovie);
     }
 
     @Override
     @Transactional
     public void updateMovie(MovieDto movie) throws UnknownMovieException {
         Objects.requireNonNull(movie, "Movie cannot be null");
+        Objects.requireNonNull(movie.getTitle(), "Movie title cannot be null");
+        Objects.requireNonNull(movie.getDuration(), "Movie duration cannot be null");
         Optional<MovieEntity> oldMovieEntity = movieRepository.findMovieEntityByTitle(movie.getTitle());
         if(oldMovieEntity.isEmpty()){
             throw new UnknownMovieException(String.format("Movie cannot found: %s",movie));
@@ -71,11 +75,11 @@ public class MovieServiceImpl implements MovieService {
             throw new UnknownMovieException(String.format("Movie cannot found by title %s",title));
         }
         movieRepository.delete(movieEntity.get());
-        log.debug("Deleted Movie {}",movieEntity);
+        log.debug("Deleted Movie {}",movieEntity.get());
     }
 
     @Override
-    public Collection<MovieDto> getMovies() {
+    public List<MovieDto> getMovies() {
         return movieRepository.findAll().stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
@@ -86,7 +90,8 @@ public class MovieServiceImpl implements MovieService {
 //        movieRepository.save(movieEntity);
 //    }
 
-    protected GenreEntity queryGenre(String name){
+    private GenreEntity queryGenre(String name){
+        Objects.requireNonNull(name, "Genre cannot be null");
         Optional<GenreEntity> genreEntityOptional = genreRepository.findGenreEntityByName(name);
         return genreEntityOptional.orElseGet(() -> genreRepository.save(GenreEntity.builder().name(name).build()));
     }

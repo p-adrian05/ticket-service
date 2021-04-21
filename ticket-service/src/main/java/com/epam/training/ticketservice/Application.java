@@ -27,33 +27,33 @@ public class Application   implements CommandLineRunner {
     private final RoomService roomService;
     @Override
     public void run(String... args) throws Exception {
-//        RoomDto roomDto = RoomDto.builder()
-//            .name("TestRoom")
-//            .columns(12)
-//            .rows(23)
-//            .build();
-//        roomService.createRoom(roomDto);
-//        roomService.readAllRooms().forEach(System.out::println);
-//
-//        MovieDto movieDto = MovieDto.builder()
-//                .title("Test")
-//                .duration(60)
-//                .genre("Akcio")
-//                .build();
-//
-//        movieService.createMovie(movieDto);
-//
-//
-//
-//        ScreeningDto screeningDto = ScreeningDto.builder()
-//                .movieName("Test")
-//                .roomName("TestRoom")
-//                .time(LocalDateTime.of(2021,4,20,12,30))
-//                .build();
-//        screeningService.createScreening(screeningDto);
-//        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
-//        screeningService.createScreening(screeningDto);
-//        movieService.deleteMovie("Test");
+        RoomDto roomDto = RoomDto.builder()
+            .name("TestRoom")
+            .columns(12)
+            .rows(23)
+            .build();
+        roomService.createRoom(roomDto);
+        roomService.readAllRooms().forEach(System.out::println);
+
+        MovieDto movieDto = MovieDto.builder()
+                .title("Test")
+                .duration(60)
+                .genre("Akcio")
+                .build();
+
+        movieService.createMovie(movieDto);
+
+
+
+        ScreeningDto screeningDto = ScreeningDto.builder()
+                .movieName("Test")
+                .roomName("TestRoom")
+                .time(LocalDateTime.of(2021,4,20,12,30))
+                .build();
+        screeningService.createScreening(screeningDto);
+        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
+        screeningService.createScreening(screeningDto);
+        movieService.deleteMovie(null);
 
 
 
