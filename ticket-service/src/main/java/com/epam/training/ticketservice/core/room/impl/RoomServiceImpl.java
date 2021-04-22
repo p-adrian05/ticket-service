@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +27,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional
     public void createRoom(RoomDto room) throws RoomAlreadyExistsException {
-        Objects.requireNonNull(room, "Room is a mandatory parameter");
+        Objects.requireNonNull(room, "Room cannot be null");
+        Objects.requireNonNull(room.getName(), "Room title cannot be null");
+        Objects.requireNonNull(room.getColumns(), "Room columns cannot be null");
+        Objects.requireNonNull(room.getRows(), "Room rows cannot be null");
         if(roomRepository.existsByName(room.getName())){
             throw new RoomAlreadyExistsException(String.format("Room already exists with name: %s",room.getName()));
         }
@@ -37,18 +40,22 @@ public class RoomServiceImpl implements RoomService {
                 .name(room.getName())
                 .rows(room.getRows())
                 .build();
-        int id =  roomRepository.save(roomEntity).getId();
-        log.debug("Created room id is : {}",id);
+        RoomEntity createdRoom = roomRepository.save(roomEntity);
+        log.debug("Created room is : {}",createdRoom);
     }
 
     @Override
     @Transactional
     public void updateRoom(RoomDto room) throws UnknownRoomException {
-        Objects.requireNonNull(room, "Room is a mandatory parameter");
+        Objects.requireNonNull(room, "Room cannot be null");
+        Objects.requireNonNull(room.getName(), "Room title cannot be null");
+        Objects.requireNonNull(room.getColumns(), "Room columns cannot be null");
+        Objects.requireNonNull(room.getRows(), "Room rows cannot be null");
         Optional<RoomEntity> oldRoomEntity = roomRepository.findByName(room.getName());
         if(oldRoomEntity.isEmpty()){
             throw new UnknownRoomException(String.format("Room is not found: %s",room));
         }
+        log.debug("Room entity before update: {}",oldRoomEntity.get());
         RoomEntity updatedRoomEntity = RoomEntity.builder()
                 .columns(room.getColumns())
                 .name(room.getName())
@@ -67,11 +74,11 @@ public class RoomServiceImpl implements RoomService {
             throw new UnknownRoomException(String.format("Room is not found with name:  %s",name));
         }
         roomRepository.delete(roomEntity.get());
-        log.debug("Deleted Room {}",roomEntity);
+        log.debug("Deleted Room {}",roomEntity.get());
     }
 
     @Override
-    public Collection<RoomDto> readAllRooms() {
+    public List<RoomDto> getRooms() {
         return roomRepository.findAll().stream()
                 .map(this::convertEntityToDto).collect(Collectors.toList());
     }

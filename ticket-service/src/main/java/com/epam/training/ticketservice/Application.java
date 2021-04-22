@@ -33,7 +33,7 @@ public class Application   implements CommandLineRunner {
             .rows(23)
             .build();
         roomService.createRoom(roomDto);
-        roomService.readAllRooms().forEach(System.out::println);
+        roomService.getRooms().forEach(System.out::println);
 
         MovieDto movieDto = MovieDto.builder()
                 .title("Test")

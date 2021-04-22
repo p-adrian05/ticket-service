@@ -14,6 +14,6 @@ public interface RoomService {
 
     void deleteRoom(String name) throws UnknownRoomException;
 
-    Collection<RoomDto> readAllRooms();
+    Collection<RoomDto> getRooms();
 
 }

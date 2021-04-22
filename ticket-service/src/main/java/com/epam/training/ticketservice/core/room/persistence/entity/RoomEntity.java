@@ -19,7 +19,7 @@ public class RoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
     @Column(unique = true)
     private String name;
     @Column
@@ -36,10 +36,9 @@ public class RoomEntity {
     @ToString.Exclude
     private Set<PriceEntity> roomPrices;
 
-    @OneToMany(
-            mappedBy = "roomEntity",
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "roomEntity",orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<ScreeningEntity> screenings = new LinkedList<>();
 
 }
