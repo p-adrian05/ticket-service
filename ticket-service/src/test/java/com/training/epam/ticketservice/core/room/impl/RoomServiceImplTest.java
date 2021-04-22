@@ -1,4 +1,4 @@
-package com.training.epam.ticketservice.core.movie.impl;
+package com.training.epam.ticketservice.core.room.impl;
 
 
 import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsException;
