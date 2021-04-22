@@ -13,6 +13,6 @@ public interface ScreeningService {
 
     void deleteScreening(ScreeningDto screeningDto) throws UnknownScreeningException;
 
-    Collection<ScreeningDto> readAllScreenings();
+    Collection<ScreeningDto> getScreenings();
 
 }

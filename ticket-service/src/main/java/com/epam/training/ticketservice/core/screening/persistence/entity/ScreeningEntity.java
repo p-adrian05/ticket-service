@@ -22,7 +22,7 @@ public class ScreeningEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
@@ -47,9 +47,8 @@ public class ScreeningEntity {
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
 
-    @OneToMany(
-            mappedBy = "screeningEntity",
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<TicketEntity> tickets = new LinkedList<>();
 }

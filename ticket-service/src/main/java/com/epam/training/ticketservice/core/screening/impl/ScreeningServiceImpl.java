@@ -38,6 +38,7 @@ public class ScreeningServiceImpl implements ScreeningService {
     @Transactional
     public void createScreening(ScreeningDto screeningDto) throws ScreeningCreationException {
         Objects.requireNonNull(screeningDto, "Screening cannot be null");
+        Objects.requireNonNull(screeningDto.getTime(), "Screening time cannot be null");
         Optional<MovieEntity> movieEntity = movieRepository.findMovieEntityByTitle(screeningDto.getMovieName());
         Optional<RoomEntity> roomEntity = roomRepository.findByName(screeningDto.getRoomName());
         if(movieEntity.isPresent() && roomEntity.isPresent()){
@@ -45,13 +46,13 @@ public class ScreeningServiceImpl implements ScreeningService {
             LocalDateTime newEnd = screeningDto.getTime().plusMinutes(movieEntity.get().getDuration());
             if(isFreeToScreen(screeningDto.getRoomName(),newStart,newEnd)){
                 log.debug("Creating new Screening : {}",screeningDto);
-                int id =  screeningRepository.save(ScreeningEntity.builder()
+                ScreeningEntity createdScreening =  screeningRepository.save(ScreeningEntity.builder()
                         .movieEntity(movieEntity.get())
                         .roomEntity(roomEntity.get())
                         .startTime(screeningDto.getTime())
-                        .endTime(screeningDto.getTime().plusMinutes(movieEntity.get().getDuration()))
-                        .build()).getId();
-                log.debug("Created screen id is : {}",id);
+                        .endTime(newEnd)
+                        .build());
+                log.debug("Created screen is : {}",createdScreening);
             }
         }else{
             throw new ScreeningCreationException
@@ -60,23 +61,20 @@ public class ScreeningServiceImpl implements ScreeningService {
         }
     }
 
-     private boolean isFreeToScreen(String roomName,LocalDateTime newStart, LocalDateTime newEnd) throws ScreeningCreationException{
+     public boolean isFreeToScreen(String roomName,LocalDateTime newStart, LocalDateTime newEnd) throws ScreeningCreationException{
         List<ScreeningEntity> nearScreenings = screeningRepository
-                .findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(roomName,newStart.minusDays(1),newEnd.plusMinutes(1));
-        if(nearScreenings.size()==0){
-            return true;
-        }
+                .findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(roomName,newStart.minusDays(1),newEnd.plusDays(1));
         for(ScreeningEntity screeningEntity : nearScreenings){
             if(!isOverlap(screeningEntity.getStartTime(),screeningEntity.getEndTime(),newStart,newEnd)){
-                if(Math.abs(Duration.between(newStart,screeningEntity.getEndTime()).toMinutes())<=10 ||
-                        Math.abs(Duration.between(newEnd,screeningEntity.getStartTime()).toMinutes())<=10 ){
+                if(Math.abs(Duration.between(newStart,screeningEntity.getEndTime()).toMinutes())<10 ||
+                        Math.abs(Duration.between(newEnd,screeningEntity.getStartTime()).toMinutes())<10 ){
                     throw new ScreeningCreationException("This would start in the break period after another screening in this room");
-                }else{
-                    return true;
                 }
+            }else{
+                throw new ScreeningCreationException("There is an overlapping screening");
             }
         }
-         throw new ScreeningCreationException("There is an overlapping screening");
+         return true;
     }
 
     private boolean isOverlap(LocalDateTime start, LocalDateTime end, LocalDateTime newStart, LocalDateTime newEnd){
@@ -91,7 +89,7 @@ public class ScreeningServiceImpl implements ScreeningService {
                findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(screeningDto.getMovieName(),screeningDto.getRoomName(),screeningDto.getTime());
        if(screeningEntity.isPresent()){
            screeningRepository.delete(screeningEntity.get());
-           log.debug("Deleted Screening {}",screeningEntity);
+           log.debug("Deleted Screening {}",screeningEntity.get());
        }else{
            throw new UnknownScreeningException(
                    String.format("Screening not found : %s",screeningDto));
@@ -100,7 +98,7 @@ public class ScreeningServiceImpl implements ScreeningService {
     }
 
     @Override
-    public Collection<ScreeningDto> readAllScreenings() {
+    public List<ScreeningDto> getScreenings() {
         return screeningRepository.findAll().stream()
                 .map(this::convertEntityToDto).collect(Collectors.toList());
     }
