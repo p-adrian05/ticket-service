@@ -1,22 +1,20 @@
 package com.epam.training.ticketservice.core.price.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Currency;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@ToString
+@Getter
 public class PriceDto {
 
-   private String name;
+   private final String name;
 
-   private Integer value;
+   private final Integer value;
 
-   private Currency currency;
+   private final Currency currency;
 }

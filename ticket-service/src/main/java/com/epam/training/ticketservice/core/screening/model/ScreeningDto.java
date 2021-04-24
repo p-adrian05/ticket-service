@@ -1,22 +1,20 @@
 package com.epam.training.ticketservice.core.screening.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@ToString
+@Getter
 public class ScreeningDto {
 
-    private String movieName;
+    private final String movieName;
 
-    private String roomName;
+    private final String roomName;
 
-    private LocalDateTime time;
+    private final LocalDateTime time;
 
 }

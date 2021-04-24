@@ -1,20 +1,18 @@
 package com.epam.training.ticketservice.core.room.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@ToString
+@Getter
 public class RoomDto {
 
-    private String name;
+    private final String name;
 
-    private Integer rows;
+    private final Integer rows;
 
-    private Integer columns;
+    private final Integer columns;
 
 }

@@ -85,7 +85,7 @@ public class TicketServiceImpl implements TicketService {
     }
     private boolean isFreeToSeat(List<SeatEntity> bookedSeats, List<SeatDto> toBookSeats) throws SeatAlreadyBookedException {
         Set<SeatDto> bookedSeatsDto = bookedSeats.stream().map(seatEntity ->
-                new SeatDto(seatEntity.getId().getRowNum(),seatEntity.getId().getColNum()))
+                SeatDto.of(seatEntity.getId().getRowNum(),seatEntity.getId().getColNum()))
                 .collect(Collectors.toSet());
         for(SeatDto seatDto : toBookSeats){
             if(bookedSeatsDto.contains(seatDto)){

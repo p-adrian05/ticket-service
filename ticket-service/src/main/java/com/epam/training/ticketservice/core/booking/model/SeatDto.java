@@ -1,17 +1,18 @@
 package com.epam.training.ticketservice.core.booking.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@ToString
+@Getter
 public class SeatDto {
 
-    private Integer row;
-    private Integer column;
+    private final Integer row;
+    private final Integer column;
 
+    public static SeatDto of(int row, int column){
+        return new SeatDto(row,column);
+    }
 }

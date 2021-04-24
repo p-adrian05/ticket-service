@@ -2,21 +2,24 @@ package com.epam.training.ticketservice.core.booking.model;
 
 
 import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.Collections;
 import java.util.List;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@ToString
+@Getter
 public class TicketDto {
 
-   List<SeatDto> seats;
-   private ScreeningDto screening;
-   private String username;
-   private Integer price;
+   private final List<SeatDto> seats;
+   private final ScreeningDto screening;
+   private final String username;
+   private final Integer price;
+
+   public List<SeatDto> getSeats() {
+      return Collections.unmodifiableList(seats);
+   }
 }

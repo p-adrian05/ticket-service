@@ -1,5 +1,10 @@
 package com.epam.training.ticketservice;
 
+import com.epam.training.ticketservice.core.account.AccountService;
+import com.epam.training.ticketservice.core.account.model.UserDto;
+import com.epam.training.ticketservice.core.booking.TicketService;
+import com.epam.training.ticketservice.core.booking.model.SeatDto;
+import com.epam.training.ticketservice.core.booking.model.TicketDto;
 import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
 import com.epam.training.ticketservice.core.price.PriceService;
@@ -13,8 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -27,7 +34,9 @@ public class Application   implements CommandLineRunner {
 
     private final MovieService movieService;
     private final ScreeningService screeningService;
+    private final AccountService accountService;
     private final RoomService roomService;
+    private final TicketService ticketService;
     private final PriceService priceService;
     @Override
     public void run(String... args) throws Exception {
@@ -37,7 +46,6 @@ public class Application   implements CommandLineRunner {
 //            .rows(23)
 //            .build();
 //        roomService.createRoom(roomDto);
-//        roomService.getRooms().forEach(System.out::println);
 //
 //        MovieDto movieDto = MovieDto.builder()
 //                .title("Test")
@@ -47,6 +55,12 @@ public class Application   implements CommandLineRunner {
 //
 //        movieService.createMovie(movieDto);
 //
+//        UserDto user = UserDto.builder()
+//                .username("asd")
+//                .isPrivileged(true)
+//                .password("asd")
+//                .build();
+//        accountService.createAccount(user);
 //
 //
 //        ScreeningDto screeningDto = ScreeningDto.builder()
@@ -55,9 +69,16 @@ public class Application   implements CommandLineRunner {
 //                .time(LocalDateTime.of(2021,4,20,12,30))
 //                .build();
 //        screeningService.createScreening(screeningDto);
-//        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
-//        screeningService.createScreening(screeningDto);
-//        movieService.deleteMovie(null);
+//
+//        TicketDto ticketDto = TicketDto.builder()
+//                .screening(screeningDto)
+//                .username("asd")
+//                .seats(List.of(SeatDto.of(1,2),new SeatDto(2,1),new SeatDto(3,3))).build();
+//ticketService.createTicket(ticketDto);
+//ticketService.createTicket(ticketDto);
+
+
+
 //        PriceDto priceDto = PriceDto.builder()
 //                .name("Name1")
 //                .value(123).build();
