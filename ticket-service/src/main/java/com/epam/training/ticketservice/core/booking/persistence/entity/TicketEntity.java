@@ -5,6 +5,8 @@ import com.epam.training.ticketservice.core.account.persistence.entity.AccountEn
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -13,22 +15,14 @@ import javax.persistence.*;
 @Entity
 public class TicketEntity {
 
-    @EmbeddedId
-    private TicketId id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("screeningId")
-    @JoinColumn(name = "screening_id")
-    private ScreeningEntity screeningEntity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("seatId")
-    @JoinColumns({
-            @JoinColumn(name = "row_num", referencedColumnName = "row_num"),
-            @JoinColumn(name = "col_num", referencedColumnName = "col_num")
-    })
-    private SeatEntity seatEntity;
-
+    @OneToMany(mappedBy = "ticketEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<SeatEntity> seats = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_id")

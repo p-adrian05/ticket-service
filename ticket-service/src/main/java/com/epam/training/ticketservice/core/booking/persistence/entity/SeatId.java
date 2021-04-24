@@ -16,9 +16,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class SeatId implements Serializable {
 
-    private static final long serialVersionUID = 2L;
-    @Column(name = "row_num")
+    private static final long serialVersionUID = 1L;
     private int rowNum;
-    @Column(name = "col_num")
     private int colNum;
+    private int screeningId;
+
+    public SeatId(int rowNum, int colNum) {
+        this.rowNum = rowNum;
+        this.colNum = colNum;
+    }
 }

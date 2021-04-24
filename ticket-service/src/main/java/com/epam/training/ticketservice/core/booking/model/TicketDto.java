@@ -7,14 +7,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ticket {
+public class TicketDto {
 
-   private Integer row;
-   private Integer column;
+   List<SeatDto> seats;
    private ScreeningDto screening;
    private String username;
    private Integer price;

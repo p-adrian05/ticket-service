@@ -1,6 +1,5 @@
 package com.training.epam.ticketservice.core.screening.impl;
 
-import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsException;
 import com.epam.training.ticketservice.core.movie.persistence.entity.GenreEntity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.movie.persistence.repository.MovieRepository;

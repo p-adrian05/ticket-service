@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.core.screening.persistence.entity;
 
+import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntity;
 import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
@@ -50,5 +51,5 @@ public class ScreeningEntity {
     @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<TicketEntity> tickets = new LinkedList<>();
+    private List<SeatEntity> seats = new LinkedList<>();
 }

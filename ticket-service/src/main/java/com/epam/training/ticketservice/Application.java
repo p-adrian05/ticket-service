@@ -2,6 +2,9 @@ package com.epam.training.ticketservice;
 
 import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
+import com.epam.training.ticketservice.core.price.PriceService;
+import com.epam.training.ticketservice.core.price.model.PriceDto;
+import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
 import com.epam.training.ticketservice.core.room.RoomService;
 import com.epam.training.ticketservice.core.room.model.RoomDto;
 import com.epam.training.ticketservice.core.screening.ScreeningService;
@@ -25,36 +28,41 @@ public class Application   implements CommandLineRunner {
     private final MovieService movieService;
     private final ScreeningService screeningService;
     private final RoomService roomService;
+    private final PriceService priceService;
     @Override
     public void run(String... args) throws Exception {
-        RoomDto roomDto = RoomDto.builder()
-            .name("TestRoom")
-            .columns(12)
-            .rows(23)
-            .build();
-        roomService.createRoom(roomDto);
-        roomService.getRooms().forEach(System.out::println);
-
-        MovieDto movieDto = MovieDto.builder()
-                .title("Test")
-                .duration(60)
-                .genre("Akcio")
-                .build();
-
-        movieService.createMovie(movieDto);
-
-
-
-        ScreeningDto screeningDto = ScreeningDto.builder()
-                .movieName("Test")
-                .roomName("TestRoom")
-                .time(LocalDateTime.of(2021,4,20,12,30))
-                .build();
-        screeningService.createScreening(screeningDto);
-        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
-        screeningService.createScreening(screeningDto);
-        movieService.deleteMovie(null);
-
+//        RoomDto roomDto = RoomDto.builder()
+//            .name("TestRoom")
+//            .columns(12)
+//            .rows(23)
+//            .build();
+//        roomService.createRoom(roomDto);
+//        roomService.getRooms().forEach(System.out::println);
+//
+//        MovieDto movieDto = MovieDto.builder()
+//                .title("Test")
+//                .duration(60)
+//                .genre("Akcio")
+//                .build();
+//
+//        movieService.createMovie(movieDto);
+//
+//
+//
+//        ScreeningDto screeningDto = ScreeningDto.builder()
+//                .movieName("Test")
+//                .roomName("TestRoom")
+//                .time(LocalDateTime.of(2021,4,20,12,30))
+//                .build();
+//        screeningService.createScreening(screeningDto);
+//        screeningDto.setTime(LocalDateTime.of(2021,4,20,13,41));
+//        screeningService.createScreening(screeningDto);
+//        movieService.deleteMovie(null);
+//        PriceDto priceDto = PriceDto.builder()
+//                .name("Name1")
+//                .value(123).build();
+//        priceService.createPrice(priceDto);
+        //priceService.createPrice(priceDto);
 
 
     }

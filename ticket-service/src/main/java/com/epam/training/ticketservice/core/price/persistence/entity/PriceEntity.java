@@ -18,11 +18,11 @@ public class PriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
     @Column(unique = true)
     private String name;
     @Column
-    private int value;
+    private Integer value;
     @Column
     private String currency;
 
