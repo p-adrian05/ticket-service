@@ -8,11 +8,7 @@ import com.epam.training.ticketservice.core.movie.persistence.repository.GenreRe
 import com.epam.training.ticketservice.core.movie.persistence.repository.MovieRepository;
 import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsException;
 import com.epam.training.ticketservice.core.movie.exceptions.UnknownMovieException;
-import com.epam.training.ticketservice.core.price.PriceService;
-import com.epam.training.ticketservice.core.price.exceptions.UnknownPriceException;
-import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
-import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
-import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -87,19 +83,6 @@ public class MovieServiceImpl implements MovieService {
     public List<MovieDto> getMovies() {
         return movieRepository.findAll().stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
-//    @Transactional
-//    public void attachPrice(String priceName,String movieName) {
-//        Objects.requireNonNull(priceName, "Price name cannot be null");
-//        Objects.requireNonNull(movieName, "Movie name cannot be null");
-//        Optional<MovieEntity> movieEntity = movieRepository.findMovieEntityByTitle(movieName);
-//        Optional<PriceEntity> priceEntity = priceRepository.findByName(priceName);
-//        if(movieEntity.isPresent() && priceEntity.isPresent()){
-//            movieEntity.get().addPrice(priceEntity.get());
-//            movieRepository.save(movieEntity.get());
-//        }else{
-//            throw new IllegalArgumentException(String.format("Movie %s or Price %s not found",movieName,priceName));
-//        }
-//    }
 
     private GenreEntity queryGenre(String name){
         Objects.requireNonNull(name, "Genre cannot be null");
