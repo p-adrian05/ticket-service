@@ -1,6 +1,5 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
-import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.account.persistence.entity.AccountEntity;
 import lombok.*;
 

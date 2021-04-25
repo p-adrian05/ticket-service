@@ -49,7 +49,7 @@ public class Application   implements CommandLineRunner {
             .build();
         roomService.createRoom(roomDto);
         PriceDto priceDto = PriceDto.builder().value(1500)
-                .name("BasePrice")
+                .name("Base")
                 .currency(Currency.getInstance("HUF")).build();
         PriceDto priceDto2 = PriceDto.builder().value(500)
                 .name("BasePrice2")
@@ -81,13 +81,13 @@ public class Application   implements CommandLineRunner {
                 .time(LocalDateTime.of(2021,4,20,12,30))
                 .build();
         screeningService.createScreening(screeningDto);
-        priceService.attachMovie("Test","BasePrice");
+        priceService.attachMovie("Test","Base");
         priceService.attachRoom("TestRoom","BasePrice2");
         priceService.attachScreening(screeningDto,"BasePrice2");
         TicketDto ticketDto = TicketDto.builder()
                 .screening(screeningDto)
                 .username("asd")
-                .seats(new HashSet<>(List.of(SeatDto.of(1,2),new SeatDto(2,1),new SeatDto(3,3)))).build();
+                .seats(new HashSet<>(List.of(SeatDto.of(1,2),new SeatDto(111,1),new SeatDto(3,3)))).build();
         System.out.println(ticketService.book(ticketDto));
 
 

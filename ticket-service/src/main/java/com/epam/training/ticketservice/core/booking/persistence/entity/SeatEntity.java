@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
+import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,10 @@ public class SeatEntity {
     @MapsId("screeningId")
     @JoinColumn(name = "screening_id")
     private ScreeningEntity screeningEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_id")
+    private PriceEntity priceEntity;
 
 }
 
