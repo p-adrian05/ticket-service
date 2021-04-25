@@ -5,7 +5,7 @@ import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
 import lombok.*;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Builder
 @EqualsAndHashCode
@@ -14,12 +14,12 @@ import java.util.List;
 @Getter
 public class TicketDto {
 
-   private final List<SeatDto> seats;
+   private final Set<SeatDto> seats;
    private final ScreeningDto screening;
    private final String username;
    private final Integer price;
 
-   public List<SeatDto> getSeats() {
-      return Collections.unmodifiableList(seats);
+   public Set<SeatDto> getSeats() {
+      return Collections.unmodifiableSet(seats);
    }
 }

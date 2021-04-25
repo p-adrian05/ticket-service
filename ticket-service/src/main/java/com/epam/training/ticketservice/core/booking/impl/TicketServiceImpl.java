@@ -31,9 +31,11 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public void createTicket(TicketDto ticketDto) throws TicketCreateException {
+    public int book(TicketDto ticketDto) throws TicketCreateException {
         Objects.requireNonNull(ticketDto, "Ticket cannot be null");
         Objects.requireNonNull(ticketDto.getScreening(), "Ticket Screening cannot be null");
+        Objects.requireNonNull(ticketDto.getSeats(), "Ticket Seats cannot be null");
+        Objects.requireNonNull(ticketDto.getUsername(), "Ticket username cannot be null");
         Optional<ScreeningEntity> screeningEntity = screeningRepository.
                 findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
                         ticketDto.getScreening().getMovieName(),
@@ -51,13 +53,15 @@ public class TicketServiceImpl implements TicketService {
                     .accountEntity(accountEntity.get())
                     .price(calculatePrice(screeningEntity.get()))
                     .build();
-            TicketEntity savedTicketEntity = ticketRepository.save(ticketEntity);
+            TicketEntity createdTicketEntity = ticketRepository.save(ticketEntity);
             Set<SeatEntity> seats = ticketDto.getSeats().stream().map(ticket->
-                    new SeatEntity(new SeatId(ticket.getRow(),ticket.getColumn()),savedTicketEntity,screeningEntity.get()))
+                    new SeatEntity(new SeatId(ticket.getRow(),ticket.getColumn()),createdTicketEntity,screeningEntity.get()))
                     .collect(Collectors.toSet());
-            savedTicketEntity.setSeats(seats);
-            ticketRepository.save(savedTicketEntity);
+            createdTicketEntity.setSeats(seats);
+            TicketEntity finalSavedTicketEntity = ticketRepository.save(createdTicketEntity);
+            return finalSavedTicketEntity.getPrice();
         }
+        return -1;
     }
 
     public int showPrice(TicketDto ticket) throws SeatAlreadyBookedException {
@@ -71,11 +75,11 @@ public class TicketServiceImpl implements TicketService {
                 return calculatePrice(screeningEntity.get());
             }
         }
-        return 0;
+        return -1;
     }
     private int calculatePrice(ScreeningEntity screeningEntity){
         int moviePrice = mapPricesToValue(screeningEntity.getMovieEntity().getMoviePrices());
-        int roomPrice = mapPricesToValue(screeningEntity.getMovieEntity().getMoviePrices());
+        int roomPrice = mapPricesToValue(screeningEntity.getRoomEntity().getRoomPrices());
         int screeningPrice = mapPricesToValue(screeningEntity.getScreeningPrices());
         return moviePrice+roomPrice+screeningPrice;
     }
@@ -83,7 +87,7 @@ public class TicketServiceImpl implements TicketService {
        Optional<Integer> priceValue = prices.stream().map(PriceEntity::getValue).reduce((Integer::sum));
         return priceValue.orElse(0);
     }
-    private boolean isFreeToSeat(List<SeatEntity> bookedSeats, List<SeatDto> toBookSeats) throws SeatAlreadyBookedException {
+    private boolean isFreeToSeat(Set<SeatEntity> bookedSeats, Set<SeatDto> toBookSeats) throws SeatAlreadyBookedException {
         Set<SeatDto> bookedSeatsDto = bookedSeats.stream().map(seatEntity ->
                 SeatDto.of(seatEntity.getId().getRowNum(),seatEntity.getId().getColNum()))
                 .collect(Collectors.toSet());
@@ -94,7 +98,6 @@ public class TicketServiceImpl implements TicketService {
         }
         return true;
     }
-
 
 
 }

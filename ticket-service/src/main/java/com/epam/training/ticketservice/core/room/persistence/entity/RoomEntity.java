@@ -5,7 +5,6 @@ import com.epam.training.ticketservice.core.screening.persistence.entity.Screeni
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,18 +26,14 @@ public class RoomEntity {
     @Column
     private int columns;
 
-    @ManyToMany
-    @JoinTable(name = "room_prices",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "price_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "rooms")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> roomPrices;
 
-    @OneToMany(mappedBy = "roomEntity",orphanRemoval = true)
+    @OneToMany(mappedBy = "roomEntity",orphanRemoval = true,fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<ScreeningEntity> screenings = new LinkedList<>();
+    private List<ScreeningEntity> screenings;
 
 }

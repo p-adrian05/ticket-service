@@ -2,6 +2,7 @@ package com.training.epam.ticketservice.core.room.impl;
 
 
 import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsException;
+import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
 import com.epam.training.ticketservice.core.room.exceptions.RoomAlreadyExistsException;
 import com.epam.training.ticketservice.core.room.exceptions.UnknownRoomException;
 import com.epam.training.ticketservice.core.room.impl.RoomServiceImpl;

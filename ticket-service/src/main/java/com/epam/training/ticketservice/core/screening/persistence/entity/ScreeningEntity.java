@@ -1,7 +1,6 @@
 package com.epam.training.ticketservice.core.screening.persistence.entity;
 
 import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntity;
-import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
@@ -9,8 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -39,17 +36,13 @@ public class ScreeningEntity {
     @Column
     private LocalDateTime endTime;
 
-    @ManyToMany
-    @JoinTable(name = "screening_prices",
-            joinColumns = @JoinColumn(name = "screening_id"),
-            inverseJoinColumns = @JoinColumn(name = "price_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "screenings")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
 
-    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true)
+    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true,fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<SeatEntity> seats = new LinkedList<>();
+    private Set<SeatEntity> seats;
 }

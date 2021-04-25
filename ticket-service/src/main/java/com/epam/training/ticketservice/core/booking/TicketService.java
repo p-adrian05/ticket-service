@@ -5,6 +5,6 @@ import com.epam.training.ticketservice.core.booking.model.TicketDto;
 
 public interface TicketService {
 
-    void createTicket(TicketDto ticket) throws TicketCreateException;
+    int book(TicketDto ticket) throws TicketCreateException;
 }
 

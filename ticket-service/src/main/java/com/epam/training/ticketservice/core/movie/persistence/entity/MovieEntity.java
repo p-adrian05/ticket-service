@@ -29,27 +29,12 @@ public class MovieEntity {
     @Column
     private int duration;
 
-    @ManyToMany
-    @JoinTable(name = "movie_prices",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "price_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "movies")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<PriceEntity> moviePrices = new HashSet<>();
+    private Set<PriceEntity> moviePrices;
 
-
-    public void addPrice(PriceEntity priceEntity) {
-        moviePrices.add(priceEntity);
-        priceEntity.getMovies().add(this);
-    }
-
-    public void removePrice(PriceEntity priceEntity) {
-        moviePrices.remove(priceEntity);
-        priceEntity.getMovies().remove(this);
-    }
-
-    @OneToMany(mappedBy = "movieEntity", orphanRemoval = true)
+    @OneToMany(mappedBy = "movieEntity", orphanRemoval = true,fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<ScreeningEntity> screenings = new LinkedList<>();

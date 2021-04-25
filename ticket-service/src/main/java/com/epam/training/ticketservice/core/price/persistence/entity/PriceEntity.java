@@ -26,19 +26,40 @@ public class PriceEntity {
     @Column
     private String currency;
 
-    @ManyToMany(mappedBy = "moviePrices")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "movie_prices",
+            joinColumns = @JoinColumn(name = "price_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<MovieEntity> movies;
 
-    @ManyToMany(mappedBy = "roomPrices")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "room_prices",
+            joinColumns = @JoinColumn(name = "price_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<RoomEntity> rooms;
 
-    @ManyToMany(mappedBy = "screeningPrices")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "screening_prices",
+            joinColumns = @JoinColumn(name = "price_id"),
+            inverseJoinColumns = @JoinColumn(name = "screening_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<ScreeningEntity> screenings;
 
+    public void addRoom(RoomEntity roomEntity) {
+        this.getRooms().add(roomEntity);
+    }
+    public void addScreening(ScreeningEntity screeningEntity) {
+        this.getScreenings().add(screeningEntity);
+    }
+    public void addMovie(MovieEntity movieEntity) {
+        this.getMovies().add(movieEntity);
+    }
 }
