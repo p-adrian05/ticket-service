@@ -42,55 +42,65 @@ public class Application   implements CommandLineRunner {
     private final PriceService priceService;
     @Override
     public void run(String... args) throws Exception {
-        RoomDto roomDto = RoomDto.builder()
-            .name("TestRoom")
-            .columns(12)
-            .rows(23)
-            .build();
-        roomService.createRoom(roomDto);
-        PriceDto priceDto = PriceDto.builder().value(1500)
-                .name("Base")
-                .currency(Currency.getInstance("HUF")).build();
-        PriceDto priceDto2 = PriceDto.builder().value(500)
-                .name("BasePrice2")
-                .currency(Currency.getInstance("HUF")).build();
-        priceService.createPrice(priceDto);
-        priceService.createPrice(priceDto2);
-
-
-
-        MovieDto movieDto = MovieDto.builder()
-                .title("Test")
-                .duration(60)
-                .genre("Akcio")
-                .build();
-
-        movieService.createMovie(movieDto);
+//        RoomDto roomDto = RoomDto.builder()
+//            .name("TestRoom")
+//            .columns(12)
+//            .rows(23)
+//            .build();
+//        roomService.createRoom(roomDto);
+//        PriceDto priceDto = PriceDto.builder().value(1500)
+//                .name("Base")
+//                .currency(Currency.getInstance("HUF")).build();
+//        PriceDto priceDto2 = PriceDto.builder().value(500)
+//                .name("BasePrice2")
+//                .currency(Currency.getInstance("HUF")).build();
+//        priceService.createPrice(priceDto);
+//        priceService.createPrice(priceDto2);
+//
+//
+//
+//        MovieDto movieDto = MovieDto.builder()
+//                .title("Test")
+//                .duration(60)
+//                .genre("Akcio")
+//                .build();
+//
+//        movieService.createMovie(movieDto);
+//
+//        UserDto user = UserDto.builder()
+//                .username("asd")
+//                .isPrivileged(true)
+//                .password("asd")
+//                .build();
+//        //accountService.s(user);
+//
+//
+//        ScreeningDto screeningDto = ScreeningDto.builder()
+//                .movieName("Test")
+//                .roomName("TestRoom")
+//                .time(LocalDateTime.of(2021,4,20,12,30))
+//                .build();
+//        screeningService.createScreening(screeningDto);
+//        priceService.attachMovie("Test","Base");
+//        priceService.attachRoom("TestRoom","BasePrice2");
+//        priceService.attachScreening(screeningDto,"BasePrice2");
+//        TicketDto ticketDto = TicketDto.builder()
+//                .screening(screeningDto)
+//                .username("asd")
+//                .seats(new HashSet<>(List.of(SeatDto.of(1,2),new SeatDto(111,1),new SeatDto(3,3)))).build();
+//        System.out.println(ticketService.book(ticketDto));
 
         UserDto user = UserDto.builder()
-                .username("asd")
-                .isPrivileged(true)
+                .username("user1")
                 .password("asd")
                 .build();
-        accountService.createAccount(user);
 
-
-        ScreeningDto screeningDto = ScreeningDto.builder()
-                .movieName("Test")
-                .roomName("TestRoom")
-                .time(LocalDateTime.of(2021,4,20,12,30))
-                .build();
-        screeningService.createScreening(screeningDto);
-        priceService.attachMovie("Test","Base");
-        priceService.attachRoom("TestRoom","BasePrice2");
-        priceService.attachScreening(screeningDto,"BasePrice2");
-        TicketDto ticketDto = TicketDto.builder()
-                .screening(screeningDto)
-                .username("asd")
-                .seats(new HashSet<>(List.of(SeatDto.of(1,2),new SeatDto(111,1),new SeatDto(3,3)))).build();
-        System.out.println(ticketService.book(ticketDto));
-
-
+     // accountService.signUp(user.getUsername(), user.getPassword());
+//     accountService.signIn("user1","asd1");
+//        accountService.signIn("user1","asd");
+//        System.out.println(accountService.getLoggedInUser());
+//        accountService.logOut();
+//        System.out.println(accountService.getLoggedInUser());
 
 //        PriceDto priceDto = PriceDto.builder()
 //                .name("Name1")
