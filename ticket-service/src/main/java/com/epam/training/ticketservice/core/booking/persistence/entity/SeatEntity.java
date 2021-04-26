@@ -7,7 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 @Data
 @Builder
@@ -20,7 +25,7 @@ public class SeatEntity {
     private SeatId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="ticket_id")
+    @JoinColumn(name = "ticket_id")
     private TicketEntity ticketEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)

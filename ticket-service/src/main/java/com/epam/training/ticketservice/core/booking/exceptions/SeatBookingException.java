@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.core.booking.exceptions;
 
-public class SeatBookingException extends TicketCreateException{
+public class SeatBookingException extends TicketCreateException {
 
     public SeatBookingException() {
         super();

@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.core.room.exceptions;
 
-public class UnknownRoomException extends Exception{
+public class UnknownRoomException extends Exception {
 
     public UnknownRoomException() {
         super();

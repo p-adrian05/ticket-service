@@ -4,7 +4,7 @@ import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsE
 import com.epam.training.ticketservice.core.movie.exceptions.UnknownMovieException;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface MovieService {
 
@@ -14,6 +14,6 @@ public interface MovieService {
 
     void deleteMovie(String title) throws UnknownMovieException;
 
-    Collection<MovieDto> getMovies();
+    List<MovieDto> getMovies();
 
 }

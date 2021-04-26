@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.core.screening.exceptions;
 
-public class UnknownScreeningException extends Exception{
+public class UnknownScreeningException extends Exception {
 
     public UnknownScreeningException() {
         super();

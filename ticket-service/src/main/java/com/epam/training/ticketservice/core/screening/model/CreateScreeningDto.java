@@ -1,15 +1,20 @@
 package com.epam.training.ticketservice.core.screening.model;
 
-import lombok.*;
+
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Builder
 @EqualsAndHashCode
 @RequiredArgsConstructor
-@ToString
 @Getter
-public class ScreeningDto {
+public class CreateScreeningDto {
 
     private final String movieName;
 
@@ -17,4 +22,9 @@ public class ScreeningDto {
 
     private final LocalDateTime time;
 
+    @Override
+    public String toString() {
+        return String.format("%s, screened in room %s, at %s", movieName, roomName,
+            time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    }
 }

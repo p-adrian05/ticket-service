@@ -4,9 +4,25 @@ import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntit
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
 

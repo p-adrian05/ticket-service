@@ -1,9 +1,25 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
 import com.epam.training.ticketservice.core.account.persistence.entity.AccountEntity;
-import lombok.*;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,13 +34,13 @@ public class TicketEntity {
     @Id
     private Integer id;
 
-    @OneToMany(mappedBy = "ticketEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="account_id")
+    @JoinColumn(name = "account_id")
     private AccountEntity accountEntity;
 
     @Column

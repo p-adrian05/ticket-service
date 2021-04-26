@@ -1,18 +1,19 @@
 package com.epam.training.ticketservice.core.screening;
 
 import com.epam.training.ticketservice.core.screening.exceptions.ScreeningCreationException;
-import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
+import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface ScreeningService {
 
 
-    void createScreening(ScreeningDto screeningDto) throws ScreeningCreationException;
+    void createScreening(CreateScreeningDto createScreeningDto) throws ScreeningCreationException;
 
-    void deleteScreening(ScreeningDto screeningDto) throws UnknownScreeningException;
+    void deleteScreening(CreateScreeningDto createScreeningDto) throws UnknownScreeningException;
 
-    Collection<ScreeningDto> getScreenings();
+    List<ScreeningDto> getScreenings();
 
 }

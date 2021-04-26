@@ -35,17 +35,18 @@ public class MovieServiceImpl implements MovieService {
         Objects.requireNonNull(movie, "Movie cannot be null");
         Objects.requireNonNull(movie.getTitle(), "Movie title cannot be null");
         Objects.requireNonNull(movie.getDuration(), "Movie duration cannot be null");
-        if(movieRepository.existsMovieEntityByTitle(movie.getTitle())){
-            throw new MovieAlreadyExistsException(String.format("Movie already exists with title: %s",movie.getTitle()));
+        if (movieRepository.existsMovieEntityByTitle(movie.getTitle())) {
+            throw new MovieAlreadyExistsException(
+                String.format("Movie already exists with title: %s", movie.getTitle()));
         }
-        log.debug("Creating new Movie : {}",movie);
+        log.debug("Creating new Movie : {}", movie);
         MovieEntity movieEntity = MovieEntity.builder()
-                .genreEntity(queryGenre(movie.getGenre()))
-                .duration(movie.getDuration())
-                .title(movie.getTitle())
-                .build();
+            .genreEntity(queryGenre(movie.getGenre()))
+            .duration(movie.getDuration())
+            .title(movie.getTitle())
+            .build();
         MovieEntity createdMovie = movieRepository.save(movieEntity);
-        log.debug("Created movie is : {}",createdMovie);
+        log.debug("Created movie is : {}", createdMovie);
     }
 
     @Override
@@ -55,28 +56,28 @@ public class MovieServiceImpl implements MovieService {
         Objects.requireNonNull(movie.getTitle(), "Movie title cannot be null");
         Objects.requireNonNull(movie.getDuration(), "Movie duration cannot be null");
         Optional<MovieEntity> oldMovieEntity = movieRepository.findMovieEntityByTitle(movie.getTitle());
-        if(oldMovieEntity.isEmpty()){
-            throw new UnknownMovieException(String.format("Movie cannot found: %s",movie));
+        if (oldMovieEntity.isEmpty()) {
+            throw new UnknownMovieException(String.format("Movie cannot found: %s", movie));
         }
         MovieEntity updatedMovieEntity = MovieEntity.builder()
-                .genreEntity(queryGenre(movie.getGenre()))
-                .duration(movie.getDuration())
-                .title(movie.getTitle())
-                .id(oldMovieEntity.get().getId())
-                .build();
+            .genreEntity(queryGenre(movie.getGenre()))
+            .duration(movie.getDuration())
+            .title(movie.getTitle())
+            .id(oldMovieEntity.get().getId())
+            .build();
         movieRepository.save(updatedMovieEntity);
-        log.debug("Updated Movie entity: {}",updatedMovieEntity);
+        log.debug("Updated Movie entity: {}", updatedMovieEntity);
     }
 
     @Override
     @Transactional
     public void deleteMovie(String title) throws UnknownMovieException {
         Optional<MovieEntity> movieEntity = movieRepository.findMovieEntityByTitle(title);
-        if(movieEntity.isEmpty()){
-            throw new UnknownMovieException(String.format("Movie cannot found by title %s",title));
+        if (movieEntity.isEmpty()) {
+            throw new UnknownMovieException(String.format("Movie cannot found by title %s", title));
         }
         movieRepository.delete(movieEntity.get());
-        log.debug("Deleted Movie {}",movieEntity.get());
+        log.debug("Deleted Movie {}", movieEntity.get());
     }
 
     @Override
@@ -84,7 +85,7 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findAll().stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
-    private GenreEntity queryGenre(String name){
+    private GenreEntity queryGenre(String name) {
         Objects.requireNonNull(name, "Genre cannot be null");
         Optional<GenreEntity> genreEntityOptional = genreRepository.findGenreEntityByName(name);
         return genreEntityOptional.orElseGet(() -> genreRepository.save(GenreEntity.builder().name(name).build()));
@@ -92,9 +93,9 @@ public class MovieServiceImpl implements MovieService {
 
     private MovieDto convertEntityToDto(MovieEntity movieEntity) {
         return MovieDto.builder()
-                .duration(movieEntity.getDuration())
-                .genre(movieEntity.getGenreEntity().getName())
-                .title(movieEntity.getTitle())
-                .build();
+            .duration(movieEntity.getDuration())
+            .genre(movieEntity.getGenreEntity().getName())
+            .title(movieEntity.getTitle())
+            .build();
     }
 }

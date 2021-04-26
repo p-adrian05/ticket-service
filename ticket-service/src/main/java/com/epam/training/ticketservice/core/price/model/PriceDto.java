@@ -1,7 +1,11 @@
 package com.epam.training.ticketservice.core.price.model;
 
 
-import lombok.*;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.util.Currency;
 
@@ -12,9 +16,9 @@ import java.util.Currency;
 @Getter
 public class PriceDto {
 
-   private final String name;
+    private final String name;
 
-   private final Integer value;
+    private final Integer value;
 
-   private final Currency currency;
+    private final Currency currency;
 }

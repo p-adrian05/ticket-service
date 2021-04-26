@@ -1,4 +1,4 @@
-package com.epam.training.ticketservice.core.security.config;
+package com.epam.training.ticketservice.core.account.security.config;
 
 
 import lombok.RequiredArgsConstructor;

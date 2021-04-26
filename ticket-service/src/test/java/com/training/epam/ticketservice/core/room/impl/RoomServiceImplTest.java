@@ -20,27 +20,27 @@ import java.util.Optional;
 public class RoomServiceImplTest {
 
     private static final RoomEntity ROOM_ENTITY_1 = RoomEntity.builder()
-            .id(1)
-            .columns(10)
-            .name("A1")
-            .rows(15)
-            .build();
+        .id(1)
+        .columns(10)
+        .name("A1")
+        .rows(15)
+        .build();
     private static final RoomEntity ROOM_ENTITY_2 = RoomEntity.builder()
-            .id(2)
-            .columns(13)
-            .name("A2")
-            .rows(11)
-            .build();
+        .id(2)
+        .columns(13)
+        .name("A2")
+        .rows(11)
+        .build();
     public static final RoomDto ROOM_DTO_1 = RoomDto.builder()
-            .name("A1")
-            .rows(15)
-            .columns(10)
-            .build();
+        .name("A1")
+        .rows(15)
+        .columns(10)
+        .build();
     public static final RoomDto ROOM_DTO_2 = RoomDto.builder()
-            .name("A2")
-            .rows(11)
-            .columns(13)
-            .build();
+        .name("A2")
+        .rows(11)
+        .columns(13)
+        .build();
 
     private RoomServiceImpl underTest;
     private RoomRepository roomRepository;
@@ -55,7 +55,7 @@ public class RoomServiceImplTest {
     public void testGetRoomsShouldCallRoomRepositoryAndReturnADtoList() {
         // Given
         Mockito.when(roomRepository.findAll()).thenReturn(List.of(ROOM_ENTITY_1, ROOM_ENTITY_2));
-        List<RoomDto> expected = List.of(ROOM_DTO_1,ROOM_DTO_2);
+        List<RoomDto> expected = List.of(ROOM_DTO_1, ROOM_DTO_2);
 
         // When
         List<RoomDto> actual = underTest.getRooms();
@@ -65,28 +65,31 @@ public class RoomServiceImplTest {
         Mockito.verify(roomRepository).findAll();
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testCreateRoomShouldCallRoomRepositoryWhenTheRoomInputIsValidAndNotExistsInDatabaseByName() throws RoomAlreadyExistsException {
+    public void testCreateRoomShouldCallRoomRepositoryWhenTheRoomInputIsValidAndNotExistsInDatabaseByName()
+        throws RoomAlreadyExistsException {
         // Given
-        RoomEntity ROOM_ENTITY_TO_CREATE = RoomEntity.builder()
-                .id(null)
-                .columns(10)
-                .name("A1")
-                .rows(15)
-                .build();
+        RoomEntity roomEntity = RoomEntity.builder()
+            .id(null)
+            .columns(10)
+            .name("A1")
+            .rows(15)
+            .build();
         Mockito.when(roomRepository.existsByName(ROOM_DTO_1.getName())).thenReturn(false);
-        Mockito.when(roomRepository.save(ROOM_ENTITY_TO_CREATE)).thenReturn(ROOM_ENTITY_1);
+        Mockito.when(roomRepository.save(roomEntity)).thenReturn(ROOM_ENTITY_1);
 
         // When
         underTest.createRoom(ROOM_DTO_1);
 
         // Then
         Mockito.verify(roomRepository).existsByName(ROOM_DTO_1.getName());
-        Mockito.verify(roomRepository).save(ROOM_ENTITY_TO_CREATE);
+        Mockito.verify(roomRepository).save(roomEntity);
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testCreateRoomShouldThrowRoomAlreadyExistsExceptionWhenRoomAlreadyExistsInDatabaseByName(){
+    public void testCreateRoomShouldThrowRoomAlreadyExistsExceptionWhenRoomAlreadyExistsInDatabaseByName() {
         // Given
         Mockito.when(roomRepository.existsByName(ROOM_DTO_1.getName())).thenReturn(true);
         // When
@@ -95,21 +98,23 @@ public class RoomServiceImplTest {
         Mockito.verify(roomRepository).existsByName(ROOM_DTO_1.getName());
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomNameIsNull(){
+    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomNameIsNull() {
         // Given
         RoomDto roomDto = RoomDto.builder()
-                .name(null)
-                .rows(15)
-                .columns(10)
-                .build();
+            .name(null)
+            .rows(15)
+            .columns(10)
+            .build();
         // When
         Assertions.assertThrows(NullPointerException.class, () -> underTest.createRoom(roomDto));
         // Then
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomInputIsNull(){
+    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomInputIsNull() {
         // Given
         RoomDto roomDto = null;
         // When
@@ -117,21 +122,24 @@ public class RoomServiceImplTest {
         // Then
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomColumnsIsNull(){
+    public void testCreateRoomShouldThrowNullPointerExistsExceptionWhenRoomColumnsIsNull() {
         // Given
         RoomDto roomDto = RoomDto.builder()
-                .name("A1")
-                .rows(15)
-                .columns(null)
-                .build();
+            .name("A1")
+            .rows(15)
+            .columns(null)
+            .build();
         // When
         Assertions.assertThrows(NullPointerException.class, () -> underTest.createRoom(roomDto));
         // Then
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testUpdateRoomShouldCallRoomRepositoryWhenTheRoomInputIsValidAndExistsInDatabaseByName() throws UnknownRoomException {
+    public void testUpdateRoomShouldCallRoomRepositoryWhenTheRoomInputIsValidAndExistsInDatabaseByName()
+        throws UnknownRoomException {
         // Given
         Mockito.when(roomRepository.findByName(ROOM_DTO_1.getName())).thenReturn(Optional.ofNullable(ROOM_ENTITY_1));
         Mockito.when(roomRepository.save(ROOM_ENTITY_1)).thenReturn(ROOM_ENTITY_1);
@@ -144,8 +152,9 @@ public class RoomServiceImplTest {
         Mockito.verify(roomRepository).save(ROOM_ENTITY_1);
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
-    public void testUpdateRoomShouldThrowUnknownRoomExceptionWhenRoomNotExistsInDatabaseByName(){
+    public void testUpdateRoomShouldThrowUnknownRoomExceptionWhenRoomNotExistsInDatabaseByName() {
         // Given
         Mockito.when(roomRepository.findByName(ROOM_DTO_1.getName())).thenReturn(Optional.empty());
         // When
@@ -154,6 +163,7 @@ public class RoomServiceImplTest {
         Mockito.verify(roomRepository).findByName(ROOM_DTO_1.getName());
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
     public void testDeleteRoomShouldCallRoomRepositoryWhenRoomExistsInDatabaseByName() throws UnknownRoomException {
         // Given
@@ -165,6 +175,7 @@ public class RoomServiceImplTest {
         Mockito.verify(roomRepository).delete(ROOM_ENTITY_1);
         Mockito.verifyNoMoreInteractions(roomRepository);
     }
+
     @Test
     public void testDeleteRoomShouldThrowUnknownRoomExceptionWhenRoomNotExistsInDatabaseByName() {
         // Given

@@ -3,9 +3,24 @@ package com.epam.training.ticketservice.core.price.persistence.entity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
-import lombok.*;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Data
@@ -56,9 +71,11 @@ public class PriceEntity {
     public void addRoom(RoomEntity roomEntity) {
         this.getRooms().add(roomEntity);
     }
+
     public void addScreening(ScreeningEntity screeningEntity) {
         this.getScreenings().add(screeningEntity);
     }
+
     public void addMovie(MovieEntity movieEntity) {
         this.getMovies().add(movieEntity);
     }

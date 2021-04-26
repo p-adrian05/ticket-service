@@ -9,7 +9,7 @@ import com.epam.training.ticketservice.core.price.model.PriceDto;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
 import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
 import com.epam.training.ticketservice.core.room.persistence.repository.RoomRepository;
-import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,18 +40,20 @@ public class PriceServiceImpl implements PriceService {
         Objects.requireNonNull(priceDto.getName(), "Price name cannot be null");
         Objects.requireNonNull(priceDto.getValue(), "Price value cannot be null");
         Objects.requireNonNull(priceDto.getCurrency(), "Currency value cannot be null");
-        if(priceRepository.existsByName(priceDto.getName())){
-            throw new PriceAlreadyExistsException(String.format("Price already exists by name: %s",priceDto.getName()));
+        if (priceRepository.existsByName(priceDto.getName())) {
+            throw new PriceAlreadyExistsException(
+                String.format("Price already exists by name: %s", priceDto.getName()));
         }
-        log.debug("Creating new Price : {}",priceDto);
+        log.debug("Creating new Price : {}", priceDto);
         PriceEntity priceEntity = PriceEntity.builder()
-                .currency(priceDto.getCurrency().getDisplayName())
-                .name(priceDto.getName())
-                .value(priceDto.getValue())
-                .build();
+            .currency(priceDto.getCurrency().getDisplayName())
+            .name(priceDto.getName())
+            .value(priceDto.getValue())
+            .build();
         PriceEntity createdPrice = priceRepository.save(priceEntity);
-        log.debug("Created Price is : {}",createdPrice);
+        log.debug("Created Price is : {}", createdPrice);
     }
+
     @Transactional
     @Override
     public void updatePrice(PriceDto priceDto) throws UnknownPriceException {
@@ -59,44 +61,48 @@ public class PriceServiceImpl implements PriceService {
         Objects.requireNonNull(priceDto.getName(), "Price name cannot be null");
         Objects.requireNonNull(priceDto.getValue(), "Price value cannot be null");
         PriceEntity priceEntity = getPriceEntity(priceDto.getName());
-        log.debug("Price before update: {}",priceEntity);
+        log.debug("Price before update: {}", priceEntity);
         priceEntity.setValue(priceDto.getValue());
         priceRepository.save(priceEntity);
-        log.debug("Updated Price is : {}",priceEntity);
+        log.debug("Updated Price is : {}", priceEntity);
     }
 
     @Transactional
     @Override
-    public void attachRoom(String roomName,String priceName) throws AttachPriceException, UnknownPriceException {
+    public void attachRoom(String roomName, String priceName) throws AttachPriceException, UnknownPriceException {
         PriceEntity priceEntity = getPriceEntity(priceName);
-        attachPrice(roomName,roomRepository::findByName,priceEntity::addRoom);
+        attachPrice(roomName, roomRepository::findByName, priceEntity::addRoom);
         priceRepository.save(priceEntity);
     }
+
     @Transactional
     @Override
-    public void attachMovie(String movieName,String priceName) throws AttachPriceException, UnknownPriceException {
+    public void attachMovie(String movieName, String priceName) throws AttachPriceException, UnknownPriceException {
         PriceEntity priceEntity = getPriceEntity(priceName);
-        attachPrice(movieName,movieRepository::findMovieEntityByTitle,priceEntity::addMovie);
+        attachPrice(movieName, movieRepository::findMovieEntityByTitle, priceEntity::addMovie);
         priceRepository.save(priceEntity);
     }
+
     @Transactional
     @Override
-    public void attachScreening(ScreeningDto screeningDto, String priceName) throws AttachPriceException, UnknownPriceException {
+    public void attachScreening(CreateScreeningDto createScreeningDto, String priceName)
+        throws AttachPriceException, UnknownPriceException {
         PriceEntity priceEntity = getPriceEntity(priceName);
         Optional<ScreeningEntity> screeningEntityOptional =
-                screeningRepository.findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                        screeningDto.getMovieName(),screeningDto.getRoomName(),screeningDto.getTime());
+            screeningRepository.findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
+                createScreeningDto.getMovieName(), createScreeningDto.getRoomName(), createScreeningDto.getTime());
         ScreeningEntity screeningEntity = screeningEntityOptional.orElseThrow(
-                ()->new AttachPriceException(String.format("Failed to attach price to %s",screeningDto)));
+            () -> new AttachPriceException(String.format("Failed to attach price to %s", createScreeningDto)));
         priceEntity.addScreening(screeningEntity);
         priceRepository.save(priceEntity);
     }
+
     private <T> void attachPrice(String entityName, Function<String, Optional<T>> query, Consumer<T> addEntityConsumer)
-            throws AttachPriceException {
+        throws AttachPriceException {
         Objects.requireNonNull(entityName, "Attaching entity name cannot be null");
         Optional<T> entity = query.apply(entityName);
-        if(entity.isEmpty()){
-            throw new AttachPriceException(String.format("Failed to attach price to %s",entity));
+        if (entity.isEmpty()) {
+            throw new AttachPriceException(String.format("Failed to attach price to %s", entity));
         }
         addEntityConsumer.accept(entity.get());
     }
@@ -104,8 +110,8 @@ public class PriceServiceImpl implements PriceService {
     private PriceEntity getPriceEntity(String name) throws UnknownPriceException {
         Objects.requireNonNull(name, "Price name cannot be null");
         Optional<PriceEntity> priceEntity = priceRepository.findByName(name);
-        if(priceEntity.isEmpty()){
-            throw new UnknownPriceException(String.format("Price not found: %s",name));
+        if (priceEntity.isEmpty()) {
+            throw new UnknownPriceException(String.format("Price not found: %s", name));
         }
         return priceEntity.get();
     }

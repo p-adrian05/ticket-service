@@ -21,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -40,52 +42,58 @@ public class TicketServiceImpl implements TicketService {
         Objects.requireNonNull(ticketDto.getScreening(), "Ticket Screening cannot be null");
         Objects.requireNonNull(ticketDto.getSeats(), "Ticket Seats cannot be null");
         Objects.requireNonNull(ticketDto.getUsername(), "Ticket username cannot be null");
-        Optional<ScreeningEntity> screeningEntity = screeningRepository.
-                findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                        ticketDto.getScreening().getMovieName(),
-                        ticketDto.getScreening().getRoomName(),
-                        ticketDto.getScreening().getTime());
+        Optional<ScreeningEntity> screeningEntity = screeningRepository
+            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
+                ticketDto.getScreening().getMovieName(),
+                ticketDto.getScreening().getRoomName(),
+                ticketDto.getScreening().getTime());
         Optional<AccountEntity> accountEntity = accountRepository.findByUsername(ticketDto.getUsername());
         if (screeningEntity.isEmpty()) {
-            throw new TicketCreateException(String.format("Screening not found for booking ticket : %s", ticketDto.getScreening()));
+            throw new TicketCreateException(
+                String.format("Screening not found for booking ticket : %s", ticketDto.getScreening()));
         }
         if (accountEntity.isEmpty()) {
-            throw new TicketCreateException(String.format("Account not found by username for booking ticket : %s", ticketDto.getUsername()));
+            throw new TicketCreateException(
+                String.format("Account not found by username for booking ticket : %s", ticketDto.getUsername()));
         }
-        if (isFreeToSeat(screeningEntity.get().getSeats(), ticketDto.getSeats(),screeningEntity.get().getRoomEntity())) {
+        if (isFreeToSeat(screeningEntity.get().getSeats(), ticketDto.getSeats(),
+            screeningEntity.get().getRoomEntity())) {
             TicketEntity ticketEntity = TicketEntity.builder().accountEntity(accountEntity.get()).build();
             return bookTicketWithSeats(ticketDto.getSeats(), ticketEntity, screeningEntity.get()).getPrice();
         }
         throw new TicketCreateException("Failed to create ticket");
     }
 
-    private TicketEntity bookTicketWithSeats(Set<SeatDto> seats, TicketEntity ticketEntity, ScreeningEntity screeningEntity)
-            throws UndefinedSeatPriceException {
+    private TicketEntity bookTicketWithSeats(Set<SeatDto> seats, TicketEntity ticketEntity,
+                                             ScreeningEntity screeningEntity)
+        throws UndefinedSeatPriceException {
         PriceEntity priceEntity = getSeatPrice();
         Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
-                SeatEntity.builder()
-                        .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
-                        .ticketEntity(ticketEntity)
-                        .screeningEntity(screeningEntity)
-                        .priceEntity(priceEntity).build())
-                .collect(Collectors.toSet());
+            SeatEntity.builder()
+                .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
+                .ticketEntity(ticketEntity)
+                .screeningEntity(screeningEntity)
+                .priceEntity(priceEntity).build())
+            .collect(Collectors.toSet());
         ticketEntity.setPrice(calculatePrice(screeningEntity, seats));
         ticketEntity.setSeats(seatEntities);
         return ticketRepository.save(ticketEntity);
     }
 
     private PriceEntity getSeatPrice() throws UndefinedSeatPriceException {
-        return priceRepository.findByName("Base").orElseThrow(() -> new UndefinedSeatPriceException("Undefined seat price"));
+        return priceRepository.findByName("Base")
+            .orElseThrow(() -> new UndefinedSeatPriceException("Undefined seat price"));
     }
 
     public int showPrice(TicketDto ticket) throws SeatBookingException, UndefinedSeatPriceException {
-        Optional<ScreeningEntity> screeningEntity = screeningRepository.
-                findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                        ticket.getScreening().getMovieName(),
-                        ticket.getScreening().getRoomName(),
-                        ticket.getScreening().getTime());
+        Optional<ScreeningEntity> screeningEntity = screeningRepository
+            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
+                ticket.getScreening().getMovieName(),
+                ticket.getScreening().getRoomName(),
+                ticket.getScreening().getTime());
         if (screeningEntity.isPresent()) {
-            if (isFreeToSeat(screeningEntity.get().getSeats(), ticket.getSeats(),screeningEntity.get().getRoomEntity())) {
+            if (isFreeToSeat(screeningEntity.get().getSeats(), ticket.getSeats(),
+                screeningEntity.get().getRoomEntity())) {
                 return calculatePrice(screeningEntity.get(), ticket.getSeats());
             }
         }
@@ -106,23 +114,25 @@ public class TicketServiceImpl implements TicketService {
         return priceValue.orElse(0);
     }
 
-    private boolean isFreeToSeat(Set<SeatEntity> bookedSeats, Set<SeatDto> toBookSeats, RoomEntity roomEntity) throws SeatBookingException {
+    private boolean isFreeToSeat(Set<SeatEntity> bookedSeats, Set<SeatDto> toBookSeats, RoomEntity roomEntity)
+        throws SeatBookingException {
         Set<SeatDto> bookedSeatsDto = bookedSeats.stream().map(seatEntity ->
-                SeatDto.of(seatEntity.getId().getRowNum(), seatEntity.getId().getColNum()))
-                .collect(Collectors.toSet());
+            SeatDto.of(seatEntity.getId().getRowNum(), seatEntity.getId().getColNum()))
+            .collect(Collectors.toSet());
         for (SeatDto seatDto : toBookSeats) {
             if (bookedSeatsDto.contains(seatDto)) {
                 throw new SeatBookingException(String.format("Seat is already booked: %s", seatDto));
-            }else if(!isSeatExists(seatDto.getColumn(),roomEntity.getColumns()) || !isSeatExists(seatDto.getRow(),roomEntity.getRows()) ){
-                    throw new SeatBookingException(String.format("Seat not exists in the room %s", seatDto));
+            } else if (!isSeatExists(seatDto.getColumn(), roomEntity.getColumns())
+                || !isSeatExists(seatDto.getRow(), roomEntity.getRows())) {
+                throw new SeatBookingException(String.format("Seat not exists in the room %s", seatDto));
             }
         }
         return true;
     }
-    private boolean isSeatExists(int seatIndex, int max){
+
+    private boolean isSeatExists(int seatIndex, int max) {
         return seatIndex > 0 && seatIndex <= max;
     }
-
 
 
 }

@@ -4,7 +4,7 @@ import com.epam.training.ticketservice.core.room.model.RoomDto;
 import com.epam.training.ticketservice.core.room.exceptions.RoomAlreadyExistsException;
 import com.epam.training.ticketservice.core.room.exceptions.UnknownRoomException;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface RoomService {
 
@@ -14,6 +14,6 @@ public interface RoomService {
 
     void deleteRoom(String name) throws UnknownRoomException;
 
-    Collection<RoomDto> getRooms();
+    List<RoomDto> getRooms();
 
 }

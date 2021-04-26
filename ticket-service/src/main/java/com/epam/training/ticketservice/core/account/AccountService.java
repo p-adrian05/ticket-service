@@ -9,14 +9,12 @@ public interface AccountService {
 
     Optional<UserDto> getUserByName(String username);
 
-    void logOut();
+    void signOut();
 
     void signUp(String username, String password) throws UsernameAlreadyExistsException;
 
     void signIn(String username,String password);
 
-    void signInWithPrivileged(String username,String password) throws UsernameAlreadyExistsException;
-
-    UserDto getLoggedInUser();
+    UserDto getSignedInUser();
 
 }
