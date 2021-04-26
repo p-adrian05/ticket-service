@@ -46,7 +46,7 @@ public class PriceServiceImpl implements PriceService {
         }
         log.debug("Creating new Price : {}", priceDto);
         PriceEntity priceEntity = PriceEntity.builder()
-            .currency(priceDto.getCurrency().getDisplayName())
+            .currency(priceDto.getCurrency().getCurrencyCode())
             .name(priceDto.getName())
             .value(priceDto.getValue())
             .build();
