@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
-import com.epam.training.ticketservice.core.account.persistence.entity.AccountEntity;
+import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +41,7 @@ public class TicketEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    private AccountEntity accountEntity;
+    private UserEntity userEntity;
 
     @Column
     private Integer price;

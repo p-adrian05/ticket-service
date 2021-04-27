@@ -1,12 +1,15 @@
 package com.epam.training.ticketservice.ui.command;
 
-import com.epam.training.ticketservice.core.account.AccountService;
+import com.epam.training.ticketservice.core.user.LoginService;
+import com.epam.training.ticketservice.core.user.UserService;
 
 import com.epam.training.ticketservice.core.screening.ScreeningService;
 import com.epam.training.ticketservice.core.screening.exceptions.ScreeningCreationException;
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
 import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
 import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
+import com.epam.training.ticketservice.core.user.model.UserDto;
+import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.shell.Availability;
@@ -17,6 +20,7 @@ import org.springframework.shell.standard.ShellMethodAvailability;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
 public class ScreeningCommand {
 
     private final ScreeningService screeningService;
-    private final AccountService accountService;
+    private final LoginService loginService;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -63,9 +67,10 @@ public class ScreeningCommand {
     }
 
     private Availability isAvailable() {
-        if (accountService.getSignedInUser() == null) {
+        Optional<UserDto> loggedInUser = loginService.getLoggedInUser();
+        if (loggedInUser.isEmpty()) {
             return Availability.unavailable("Not logged in");
-        } else if (accountService.getSignedInUser().isPrivileged()) {
+        } else if (loggedInUser.get().getRole().equals(UserEntity.Role.ADMIN)) {
             return Availability.available();
         }
         return Availability.unavailable("You are not an admin user");

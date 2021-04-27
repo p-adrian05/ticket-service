@@ -1,7 +1,7 @@
 package com.epam.training.ticketservice.core.booking.impl;
 
-import com.epam.training.ticketservice.core.account.persistence.entity.AccountEntity;
-import com.epam.training.ticketservice.core.account.persistence.repository.AccountRepository;
+import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.core.user.persistence.repository.UserRepository;
 import com.epam.training.ticketservice.core.booking.TicketService;
 import com.epam.training.ticketservice.core.booking.exceptions.SeatBookingException;
 import com.epam.training.ticketservice.core.booking.exceptions.TicketCreateException;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class TicketServiceImpl implements TicketService {
 
     private final ScreeningRepository screeningRepository;
-    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
     private final PriceRepository priceRepository;
 
@@ -47,7 +47,7 @@ public class TicketServiceImpl implements TicketService {
                 ticketDto.getScreening().getMovieName(),
                 ticketDto.getScreening().getRoomName(),
                 ticketDto.getScreening().getTime());
-        Optional<AccountEntity> accountEntity = accountRepository.findByUsername(ticketDto.getUsername());
+        Optional<UserEntity> accountEntity = userRepository.findByUsername(ticketDto.getUsername());
         if (screeningEntity.isEmpty()) {
             throw new TicketCreateException(
                 String.format("Screening not found for booking ticket : %s", ticketDto.getScreening()));
@@ -58,7 +58,7 @@ public class TicketServiceImpl implements TicketService {
         }
         if (isFreeToSeat(screeningEntity.get().getSeats(), ticketDto.getSeats(),
             screeningEntity.get().getRoomEntity())) {
-            TicketEntity ticketEntity = TicketEntity.builder().accountEntity(accountEntity.get()).build();
+            TicketEntity ticketEntity = TicketEntity.builder().userEntity(accountEntity.get()).build();
             return bookTicketWithSeats(ticketDto.getSeats(), ticketEntity, screeningEntity.get()).getPrice();
         }
         throw new TicketCreateException("Failed to create ticket");

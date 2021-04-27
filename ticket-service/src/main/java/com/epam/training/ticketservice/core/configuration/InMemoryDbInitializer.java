@@ -1,0 +1,31 @@
+package com.epam.training.ticketservice.core.configuration;
+
+import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.core.user.persistence.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+@Component
+@Profile("! prod")
+@RequiredArgsConstructor
+public class InMemoryDbInitializer {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @PostConstruct
+    public void init() {
+        userRepository.save(UserEntity.builder()
+            .username("admin")
+            .password(passwordEncoder.encode("admin"))
+            .role(UserEntity.Role.ADMIN)
+            .build());
+//        System.out.println(UserEntity.Role.ADMIN.name());
+//        System.out.println(userRepository.findByUsername("admin").get());
+    }
+
+}
