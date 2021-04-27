@@ -1,20 +1,14 @@
 package com.epam.training.ticketservice.core.booking.impl;
 
+import com.epam.training.ticketservice.core.booking.SeatService;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
 import com.epam.training.ticketservice.core.user.persistence.repository.UserRepository;
 import com.epam.training.ticketservice.core.booking.TicketService;
-import com.epam.training.ticketservice.core.booking.exceptions.SeatBookingException;
-import com.epam.training.ticketservice.core.booking.exceptions.TicketCreateException;
 import com.epam.training.ticketservice.core.booking.model.SeatDto;
 import com.epam.training.ticketservice.core.booking.model.TicketDto;
-import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntity;
-import com.epam.training.ticketservice.core.booking.persistence.entity.SeatId;
 import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
-import com.epam.training.ticketservice.core.booking.persistence.repository.TicketRepository;
-import com.epam.training.ticketservice.core.booking.exceptions.UndefinedSeatPriceException;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
-import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
-import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +18,6 @@ import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -32,107 +25,57 @@ public class TicketServiceImpl implements TicketService {
 
     private final ScreeningRepository screeningRepository;
     private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
-    private final PriceRepository priceRepository;
+    private final SeatService seatService;
 
     @Override
     @Transactional
-    public int book(TicketDto ticketDto) throws TicketCreateException {
+    public Optional<Integer> book(TicketDto ticketDto){
         Objects.requireNonNull(ticketDto, "Ticket cannot be null");
         Objects.requireNonNull(ticketDto.getScreening(), "Ticket Screening cannot be null");
         Objects.requireNonNull(ticketDto.getSeats(), "Ticket Seats cannot be null");
         Objects.requireNonNull(ticketDto.getUsername(), "Ticket username cannot be null");
-        Optional<ScreeningEntity> screeningEntity = screeningRepository
-            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                ticketDto.getScreening().getMovieName(),
-                ticketDto.getScreening().getRoomName(),
-                ticketDto.getScreening().getTime());
+
+        Optional<Integer> sumPrice = calculatePrice(ticketDto.getScreening(),ticketDto.getSeats());
         Optional<UserEntity> accountEntity = userRepository.findByUsername(ticketDto.getUsername());
-        if (screeningEntity.isEmpty()) {
-            throw new TicketCreateException(
-                String.format("Screening not found for booking ticket : %s", ticketDto.getScreening()));
+        if (accountEntity.isEmpty() || sumPrice.isEmpty()) {
+          return Optional.empty();
         }
-        if (accountEntity.isEmpty()) {
-            throw new TicketCreateException(
-                String.format("Account not found by username for booking ticket : %s", ticketDto.getUsername()));
-        }
-        if (isFreeToSeat(screeningEntity.get().getSeats(), ticketDto.getSeats(),
-            screeningEntity.get().getRoomEntity())) {
-            TicketEntity ticketEntity = TicketEntity.builder().userEntity(accountEntity.get()).build();
-            return bookTicketWithSeats(ticketDto.getSeats(), ticketEntity, screeningEntity.get()).getPrice();
-        }
-        throw new TicketCreateException("Failed to create ticket");
+        TicketEntity ticketEntity = TicketEntity
+            .builder()
+            .userEntity(accountEntity.get())
+            .price(sumPrice.get()).build();
+        seatService.bookSeatsToScreening(ticketDto.getSeats(),ticketDto.getScreening(),ticketEntity);
+        return sumPrice;
     }
 
-    private TicketEntity bookTicketWithSeats(Set<SeatDto> seats, TicketEntity ticketEntity,
-                                             ScreeningEntity screeningEntity)
-        throws UndefinedSeatPriceException {
-        PriceEntity priceEntity = getSeatPrice();
-        Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
-            SeatEntity.builder()
-                .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
-                .ticketEntity(ticketEntity)
-                .screeningEntity(screeningEntity)
-                .priceEntity(priceEntity).build())
-            .collect(Collectors.toSet());
-        ticketEntity.setPrice(calculatePrice(screeningEntity, seats));
-        ticketEntity.setSeats(seatEntities);
-        return ticketRepository.save(ticketEntity);
+
+    @Override
+    public Optional<Integer> showPrice(TicketDto ticket){
+        if (seatService.isFreeToSeat(ticket.getSeats(),ticket.getScreening())) {
+            return calculatePrice(ticket.getScreening(), ticket.getSeats());
+        }
+        return Optional.empty();
     }
 
-    private PriceEntity getSeatPrice() throws UndefinedSeatPriceException {
-        return priceRepository.findByName("Base")
-            .orElseThrow(() -> new UndefinedSeatPriceException("Undefined seat price"));
-    }
-
-    public int showPrice(TicketDto ticket) throws SeatBookingException, UndefinedSeatPriceException {
+    private Optional<Integer> calculatePrice(BasicScreeningDto screeningDto, Set<SeatDto> seats)  {
         Optional<ScreeningEntity> screeningEntity = screeningRepository
             .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                ticket.getScreening().getMovieName(),
-                ticket.getScreening().getRoomName(),
-                ticket.getScreening().getTime());
-        if (screeningEntity.isPresent()) {
-            if (isFreeToSeat(screeningEntity.get().getSeats(), ticket.getSeats(),
-                screeningEntity.get().getRoomEntity())) {
-                return calculatePrice(screeningEntity.get(), ticket.getSeats());
-            }
+                screeningDto.getMovieName(),
+                screeningDto.getRoomName(),
+                screeningDto.getTime());
+        if(screeningEntity.isEmpty()){
+            return Optional.empty();
         }
-        return -1;
-    }
-
-    private int calculatePrice(ScreeningEntity screeningEntity, Set<SeatDto> seats) throws UndefinedSeatPriceException {
-        PriceEntity seatPriceEntity = getSeatPrice();
-        int seatPrice = seatPriceEntity.getValue() * seats.size();
-        int moviePrice = mapPricesToValue(screeningEntity.getMovieEntity().getMoviePrices());
-        int roomPrice = mapPricesToValue(screeningEntity.getRoomEntity().getRoomPrices());
-        int screeningPrice = mapPricesToValue(screeningEntity.getScreeningPrices());
-        return moviePrice + roomPrice + screeningPrice + seatPrice;
+        int seatPrice =  seatService.calculateSeatPrice(seats);
+        int moviePrice = mapPricesToValue(screeningEntity.get().getMovieEntity().getMoviePrices());
+        int roomPrice = mapPricesToValue(screeningEntity.get().getRoomEntity().getRoomPrices());
+        int screeningPrice = mapPricesToValue(screeningEntity.get().getScreeningPrices());
+        return Optional.of(moviePrice + roomPrice + screeningPrice + seatPrice);
     }
 
     private int mapPricesToValue(Set<PriceEntity> prices) {
         Optional<Integer> priceValue = prices.stream().map(PriceEntity::getValue).reduce((Integer::sum));
         return priceValue.orElse(0);
     }
-
-    private boolean isFreeToSeat(Set<SeatEntity> bookedSeats, Set<SeatDto> toBookSeats, RoomEntity roomEntity)
-        throws SeatBookingException {
-        Set<SeatDto> bookedSeatsDto = bookedSeats.stream().map(seatEntity ->
-            SeatDto.of(seatEntity.getId().getRowNum(), seatEntity.getId().getColNum()))
-            .collect(Collectors.toSet());
-        for (SeatDto seatDto : toBookSeats) {
-            if (bookedSeatsDto.contains(seatDto)) {
-                throw new SeatBookingException(String.format("Seat is already booked: %s", seatDto));
-            } else if (!isSeatExists(seatDto.getColumn(), roomEntity.getColumns())
-                || !isSeatExists(seatDto.getRow(), roomEntity.getRows())) {
-                throw new SeatBookingException(String.format("Seat not exists in the room %s", seatDto));
-            }
-        }
-        return true;
-    }
-
-    private boolean isSeatExists(int seatIndex, int max) {
-        return seatIndex > 0 && seatIndex <= max;
-    }
-
 
 }

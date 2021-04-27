@@ -10,7 +10,7 @@ import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
 import com.epam.training.ticketservice.core.screening.ScreeningService;
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class ScreeningServiceImpl implements ScreeningService {
 
     @Override
     @Transactional
-    public void createScreening(CreateScreeningDto screeningDto) throws ScreeningCreationException {
+    public void createScreening(BasicScreeningDto screeningDto) throws ScreeningCreationException {
         Objects.requireNonNull(screeningDto, "Screening cannot be null");
         Objects.requireNonNull(screeningDto.getTime(), "Screening time cannot be null");
         Optional<MovieEntity> movieEntity = movieRepository.findMovieEntityByTitle(screeningDto.getMovieName());
@@ -88,16 +88,16 @@ public class ScreeningServiceImpl implements ScreeningService {
 
     @Override
     @Transactional
-    public void deleteScreening(CreateScreeningDto createScreeningDto) throws UnknownScreeningException {
+    public void deleteScreening(BasicScreeningDto basicScreeningDto) throws UnknownScreeningException {
         Optional<ScreeningEntity> screeningEntity = screeningRepository
-            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(createScreeningDto.getMovieName(),
-                createScreeningDto.getRoomName(), createScreeningDto.getTime());
+            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(basicScreeningDto.getMovieName(),
+                basicScreeningDto.getRoomName(), basicScreeningDto.getTime());
         if (screeningEntity.isPresent()) {
             screeningRepository.delete(screeningEntity.get());
             log.debug("Deleted Screening {}", screeningEntity.get());
         } else {
             throw new UnknownScreeningException(
-                String.format("Screening not found : %s", createScreeningDto));
+                String.format("Screening not found : %s", basicScreeningDto));
         }
 
     }

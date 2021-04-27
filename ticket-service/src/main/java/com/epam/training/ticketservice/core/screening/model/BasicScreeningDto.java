@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @Getter
-public class CreateScreeningDto {
+public class BasicScreeningDto {
 
     private final String movieName;
 

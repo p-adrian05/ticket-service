@@ -21,7 +21,6 @@ public class LoginServiceImpl implements LoginService {
     public Optional<UserDto> logOut() {
         Optional<UserDto> previouslyLoggedInUser = getLoggedInUser();
         loggedInUser = null;
-        System.out.println(getLoggedInUser());
         return previouslyLoggedInUser;
     }
 

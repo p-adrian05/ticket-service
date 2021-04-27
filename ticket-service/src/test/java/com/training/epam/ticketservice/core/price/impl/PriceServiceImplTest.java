@@ -13,7 +13,7 @@ import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity
 import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.room.persistence.repository.RoomRepository;
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
@@ -47,7 +47,7 @@ public class PriceServiceImplTest {
         .duration(100)
         .title("Test1 title")
         .genreEntity(new GenreEntity(null, "Action")).build();
-    public static final CreateScreeningDto SCREENING_DTO = CreateScreeningDto.builder()
+    public static final BasicScreeningDto SCREENING_DTO = BasicScreeningDto.builder()
         .movieName("TEST")
         .roomName("A1")
         .time(LocalDateTime.of(2021, 4, 22, 10, 30))

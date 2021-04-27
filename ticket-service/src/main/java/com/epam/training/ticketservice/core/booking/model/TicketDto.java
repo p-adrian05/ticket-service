@@ -1,7 +1,7 @@
 package com.epam.training.ticketservice.core.booking.model;
 
 
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import java.util.Set;
 public class TicketDto {
 
     private final Set<SeatDto> seats;
-    private final CreateScreeningDto screening;
+    private final BasicScreeningDto screening;
     private final String username;
     private final Integer price;
 

@@ -10,7 +10,7 @@ import com.epam.training.ticketservice.core.room.persistence.repository.RoomRepo
 import com.epam.training.ticketservice.core.screening.exceptions.ScreeningCreationException;
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
 import com.epam.training.ticketservice.core.screening.impl.ScreeningServiceImpl;
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
@@ -68,7 +68,7 @@ public class ScreeningServiceImplTest {
         .roomName("A1")
         .time(LocalDateTime.of(2021, 4, 22, 14, 30))
         .build();
-    public static final CreateScreeningDto CREATE_SCREENING_DTO_1 = CreateScreeningDto.builder()
+    public static final BasicScreeningDto CREATE_SCREENING_DTO_1 = BasicScreeningDto.builder()
         .movieName(MOVIE_DTO_1.getTitle())
         .roomName("A1")
         .time(LocalDateTime.of(2021, 4, 22, 10, 30))

@@ -9,7 +9,7 @@ import com.epam.training.ticketservice.core.price.model.PriceDto;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
 import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
 import com.epam.training.ticketservice.core.room.persistence.repository.RoomRepository;
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
 import lombok.RequiredArgsConstructor;
@@ -85,14 +85,14 @@ public class PriceServiceImpl implements PriceService {
 
     @Transactional
     @Override
-    public void attachScreening(CreateScreeningDto createScreeningDto, String priceName)
+    public void attachScreening(BasicScreeningDto basicScreeningDto, String priceName)
         throws AttachPriceException, UnknownPriceException {
         PriceEntity priceEntity = getPriceEntity(priceName);
         Optional<ScreeningEntity> screeningEntityOptional =
             screeningRepository.findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                createScreeningDto.getMovieName(), createScreeningDto.getRoomName(), createScreeningDto.getTime());
+                basicScreeningDto.getMovieName(), basicScreeningDto.getRoomName(), basicScreeningDto.getTime());
         ScreeningEntity screeningEntity = screeningEntityOptional.orElseThrow(
-            () -> new AttachPriceException(String.format("Failed to attach price to %s", createScreeningDto)));
+            () -> new AttachPriceException(String.format("Failed to attach price to %s", basicScreeningDto)));
         priceEntity.addScreening(screeningEntity);
         priceRepository.save(priceEntity);
     }

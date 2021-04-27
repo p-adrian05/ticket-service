@@ -4,7 +4,7 @@ import com.epam.training.ticketservice.core.price.exceptions.AttachPriceExceptio
 import com.epam.training.ticketservice.core.price.exceptions.PriceAlreadyExistsException;
 import com.epam.training.ticketservice.core.price.exceptions.UnknownPriceException;
 import com.epam.training.ticketservice.core.price.model.PriceDto;
-import com.epam.training.ticketservice.core.screening.model.CreateScreeningDto;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 
 
 public interface PriceService {
@@ -17,6 +17,6 @@ public interface PriceService {
 
     void attachRoom(String roomName,String priceName) throws AttachPriceException, UnknownPriceException;
 
-    void attachScreening(CreateScreeningDto createScreeningDto, String priceName)
+    void attachScreening(BasicScreeningDto basicScreeningDto, String priceName)
         throws AttachPriceException, UnknownPriceException;
 }
