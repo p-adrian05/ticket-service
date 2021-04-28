@@ -12,9 +12,6 @@ public interface MovieRepository extends JpaRepository<MovieEntity,Integer> {
 
     Optional<MovieEntity> findMovieEntityByTitle(String title);
 
-    @Query(value = "SELECT m FROM MovieEntity m join fetch m.moviePrices")
-    Optional<MovieEntity> findMovieEntityByTitleWithPrices(String title);
-
     boolean existsMovieEntityByTitle(String title);
 
     @Override

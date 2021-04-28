@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+
 @Component
 @Profile("! prod")
 @RequiredArgsConstructor
@@ -18,14 +19,13 @@ public class InMemoryDbInitializer {
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct
-    public void init() {
+    public void init(){
         userRepository.save(UserEntity.builder()
             .username("admin")
             .password(passwordEncoder.encode("admin"))
             .role(UserEntity.Role.ADMIN)
             .build());
-//        System.out.println(UserEntity.Role.ADMIN.name());
-//        System.out.println(userRepository.findByUsername("admin").get());
+
     }
 
 }

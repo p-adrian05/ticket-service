@@ -1,14 +1,18 @@
 package com.epam.training.ticketservice.core.booking;
 
-import com.epam.training.ticketservice.core.booking.exceptions.TicketCreateException;
+import com.epam.training.ticketservice.core.booking.exceptions.BookingException;
+import com.epam.training.ticketservice.core.booking.model.BookingDto;
 import com.epam.training.ticketservice.core.booking.model.TicketDto;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TicketService {
 
-    Optional<Integer> book(TicketDto ticket) throws TicketCreateException;
+    TicketDto book(BookingDto bookingDto, String username) throws BookingException;
 
-    Optional<Integer> showPrice(TicketDto ticket);
+    Optional<Integer> showPrice(BookingDto ticket) throws BookingException;
+
+    List<TicketDto> getTicketsByUsername(String username);
 }
 

@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
+import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +39,9 @@ public class TicketEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ScreeningEntity screeningEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

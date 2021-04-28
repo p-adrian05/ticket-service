@@ -1,15 +1,16 @@
 package com.epam.training.ticketservice.core.booking;
 
+import com.epam.training.ticketservice.core.booking.exceptions.BookingException;
+import com.epam.training.ticketservice.core.booking.model.BookingDto;
 import com.epam.training.ticketservice.core.booking.model.SeatDto;
-
 import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
-import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
+import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
 
 import java.util.Set;
 
 public interface SeatService {
 
-    boolean isFreeToSeat(Set<SeatDto> toBookSeats, BasicScreeningDto screeningDto);
-    void bookSeatsToScreening(Set<SeatDto> toBookSeats, BasicScreeningDto screeningDto, TicketEntity ticketEntity);
+    boolean isFreeToSeat(Set<SeatDto> seats, ScreeningEntity screeningEntity)  throws BookingException;
+     void bookSeatsToTicket(BookingDto bookingDto, TicketEntity ticketEntity) throws BookingException;
     int calculateSeatPrice(Set<SeatDto> seats);
 }

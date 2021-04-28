@@ -5,11 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.logging.log4j.message.StringFormattedMessage;
 
 @Builder
 @EqualsAndHashCode
 @RequiredArgsConstructor
-@ToString
 @Getter
 public class SeatDto {
 
@@ -18,5 +18,10 @@ public class SeatDto {
 
     public static SeatDto of(int row, int column) {
         return new SeatDto(row, column);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(%s,%s)",row,column);
     }
 }
