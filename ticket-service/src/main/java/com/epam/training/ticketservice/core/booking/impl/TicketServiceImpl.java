@@ -52,15 +52,16 @@ public class TicketServiceImpl implements TicketService {
         }
         Optional<UserEntity> accountEntity = userRepository.findByUsername(username);
         if (accountEntity.isEmpty()) {
-            throw new BookingException(String.format("User not exists %s", bookingDto.getScreening()));
+            throw new BookingException(String.format("User not exists %s",username));
         }
+        int price = calculatePrice(screeningEntity.get(), bookingDto.getSeats());
         TicketEntity ticketEntity = TicketEntity
             .builder()
             .userEntity(accountEntity.get())
             .screeningEntity(screeningEntity.get())
-            .price(calculatePrice(screeningEntity.get(), bookingDto.getSeats())).build();
+            .price(price).build();
         TicketEntity createdTicket = ticketRepository.save(ticketEntity);
-        seatService.bookSeatsToTicket(bookingDto.getSeats(), ticketEntity);
+        seatService.bookSeatsToTicket(bookingDto.getSeats(), createdTicket);
 
         return TicketDto.builder()
             .screening(bookingDto.getScreening())
@@ -84,7 +85,7 @@ public class TicketServiceImpl implements TicketService {
         }
         return Optional.empty();
     }
-
+    @Override
     public List<TicketDto> getTicketsByUsername(String username) {
         Set<TicketEntity> ticketEntities =
             new HashSet<>(ticketRepository.findTicketEntitiesByUserEntityUsername(username));
