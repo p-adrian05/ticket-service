@@ -11,6 +11,6 @@ import java.util.Set;
 public interface SeatService {
 
     boolean isFreeToSeat(Set<SeatDto> seats, ScreeningEntity screeningEntity)  throws BookingException;
-     void bookSeatsToTicket(BookingDto bookingDto, TicketEntity ticketEntity) throws BookingException;
+    void bookSeatsToTicket(Set<SeatDto> seats,TicketEntity ticketEntity) throws BookingException;
     int calculateSeatPrice(Set<SeatDto> seats);
 }

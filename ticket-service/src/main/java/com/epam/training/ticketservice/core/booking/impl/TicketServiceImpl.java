@@ -60,7 +60,7 @@ public class TicketServiceImpl implements TicketService {
             .screeningEntity(screeningEntity.get())
             .price(calculatePrice(screeningEntity.get(), bookingDto.getSeats())).build();
         TicketEntity createdTicket = ticketRepository.save(ticketEntity);
-        seatService.bookSeatsToTicket(bookingDto, ticketEntity);
+        seatService.bookSeatsToTicket(bookingDto.getSeats(), ticketEntity);
 
         return TicketDto.builder()
             .screening(bookingDto.getScreening())

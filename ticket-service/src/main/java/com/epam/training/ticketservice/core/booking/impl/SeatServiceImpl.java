@@ -39,7 +39,7 @@ public class SeatServiceImpl implements SeatService {
         Set<SeatDto> bookedSeatsDto = convertSeatEntitiesToDto(screeningEntity.getSeats());
         for (SeatDto seatDto : toBookSeats) {
             if (bookedSeatsDto.contains(seatDto)) {
-               throw new BookingException(String.format("Seat is %s is already taken",seatDto));
+               throw new BookingException(String.format("Seat %s is already taken",seatDto));
             } else if (!isSeatExists(seatDto.getColumn(), roomEntity.getColumns())
                 || !isSeatExists(seatDto.getRow(), roomEntity.getRows())) {
                 throw new BookingException(String.format("Seat %s does not exist in this room",seatDto));
@@ -55,10 +55,10 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void bookSeatsToTicket(BookingDto bookingDto,TicketEntity ticketEntity) throws BookingException {
-        if (isFreeToSeat(bookingDto.getSeats(), ticketEntity.getScreeningEntity())) {
+    public void bookSeatsToTicket(Set<SeatDto> seats,TicketEntity ticketEntity) throws BookingException {
+        if (isFreeToSeat(seats, ticketEntity.getScreeningEntity())) {
                 PriceEntity priceEntity = getSeatPriceEntity();
-                Set<SeatEntity> seatEntities = bookingDto.getSeats().stream().map(seatDto ->
+                Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
                     SeatEntity.builder()
                         .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
                         .ticketEntity(ticketEntity)
