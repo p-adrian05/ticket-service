@@ -24,6 +24,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -61,4 +63,12 @@ public class ScreeningEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats;
+
+    public List<PriceEntity> prices(){
+        List<PriceEntity> prices = new LinkedList<>();
+        prices.addAll(screeningPrices);
+        prices.addAll(roomEntity.getRoomPrices());
+        prices.addAll(movieEntity.getMoviePrices());
+        return prices;
+    }
 }

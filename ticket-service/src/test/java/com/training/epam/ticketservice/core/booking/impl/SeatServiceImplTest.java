@@ -7,6 +7,7 @@ import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntit
 import com.epam.training.ticketservice.core.booking.persistence.entity.SeatId;
 import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
 import com.epam.training.ticketservice.core.booking.persistence.repository.SeatRepository;
+import com.epam.training.ticketservice.core.finance.money.Money;
 import com.epam.training.ticketservice.core.movie.persistence.entity.GenreEntity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Currency;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,7 +56,8 @@ public class SeatServiceImplTest {
     private static final TicketEntity TICKET_ENTITY = TicketEntity.builder()
         .id(1)
         .screeningEntity(SCREENING_ENTITY)
-        .price(3000)
+        .price(1500.0)
+        .currency("HUF")
         .build();
     private final static PriceEntity PRICE_ENTITY = PriceEntity
         .builder()
@@ -120,29 +123,11 @@ public class SeatServiceImplTest {
         Mockito.when(priceRepository.findByName(PRICE_ENTITY.getName()))
             .thenReturn(Optional.of(PRICE_ENTITY));
         // When
-        int actual = underTest.calculateSeatPrice(seats);
+        Money actual = underTest.calculateSeatPrice(seats);
 
         // Then
-        Assertions.assertEquals(3000, actual);
+        Assertions.assertEquals(3000.0, actual.getAmount());
         Mockito.verify(priceRepository).findByName(PRICE_ENTITY.getName());
-        Mockito.verifyNoMoreInteractions(priceRepository);
-    }
-
-    @Test
-    public void testCalculateSeatPriceShouldCallPriceRepositoryAndCreateBasePriceIfNotExists() {
-        // Given
-        Set<SeatDto> seats = Set.of(SeatDto.of(4, 2), SeatDto.of(5, 6));
-        Mockito.when(priceRepository.findByName(PRICE_ENTITY.getName()))
-            .thenReturn(Optional.empty());
-        Mockito.when(priceRepository.save(PRICE_ENTITY))
-            .thenReturn(PRICE_ENTITY);
-        // When
-        int actual = underTest.calculateSeatPrice(seats);
-
-        // Then
-        Mockito.verify(priceRepository).findByName(PRICE_ENTITY.getName());
-        Mockito.verify(priceRepository).save(PRICE_ENTITY);
-        Assertions.assertEquals(3000, actual);
         Mockito.verifyNoMoreInteractions(priceRepository);
     }
 
@@ -165,13 +150,14 @@ public class SeatServiceImplTest {
         Mockito.when(priceRepository.findByName(PRICE_ENTITY.getName()))
             .thenReturn(Optional.of(PRICE_ENTITY));
         // When
-        underTest.bookSeatsToTicket(seats, TICKET_ENTITY);
+        underTest.bookSeatsToTicket(seats, TICKET_ENTITY, SCREENING_ENTITY);
         // Then
         Mockito.verify(seatRepository).saveAll(seatEntities);
-        Mockito.verify(priceRepository).findByName(PRICE_ENTITY.getName());
+        Mockito.verify(priceRepository,Mockito.times(2)).findByName(PRICE_ENTITY.getName());
         Mockito.verifyNoMoreInteractions(seatRepository);
         Mockito.verifyNoMoreInteractions(priceRepository);
     }
+
     @Test
     public void testBookSeatsToTicketShouldCallSeatRepositoryWhenInputsSeatsNotValid() {
         // Given
@@ -191,7 +177,8 @@ public class SeatServiceImplTest {
         Mockito.when(priceRepository.findByName(PRICE_ENTITY.getName()))
             .thenReturn(Optional.of(PRICE_ENTITY));
         // When
-        Assertions.assertThrows(BookingException.class, () ->    underTest.bookSeatsToTicket(seats, TICKET_ENTITY));
+        Assertions.assertThrows(BookingException.class,
+            () -> underTest.bookSeatsToTicket(seats, TICKET_ENTITY, SCREENING_ENTITY));
 
     }
 }
