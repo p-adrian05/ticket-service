@@ -10,8 +10,9 @@ import java.util.Optional;
 
 public interface TicketPriceCalculator {
 
-    Optional<Money> calculatePriceForBooking(BookingDto bookingDto,Currency currency) throws BookingException;
+    Optional<Money> calculatePriceForBooking(BookingDto bookingDto, Currency currency) throws BookingException;
 
-    Optional<Money> calculatePriceForTicket(TicketEntity ticketEntity, BookingDto bookingDto,Currency currency) throws BookingException;
+    Optional<Money> calculatePriceForTicket(TicketEntity ticketEntity, BookingDto bookingDto, Currency currency)
+        throws BookingException;
 }
 
