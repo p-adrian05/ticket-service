@@ -1,14 +1,17 @@
 package com.epam.training.ticketservice.core.finance.money;
 
 
-
 import com.epam.training.ticketservice.core.finance.bank.Bank;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Currency;
 import java.util.Objects;
 
 import static java.lang.String.format;
 
+@ToString
+@EqualsAndHashCode
 public class Money {
 
     private final double amount;
@@ -39,15 +42,15 @@ public class Money {
         return new Money(this.amount / divider, this.currency);
     }
 
-    public Money to(String toCurrency, Bank bank){
+    public Money to(String toCurrency, Bank bank) {
         return to(Currency.getInstance(toCurrency), bank);
     }
 
-    public Money to(Currency toCurrency, Bank bank){
+    public Money to(Currency toCurrency, Bank bank) {
         Objects.requireNonNull(bank, "Bank is a mandatory parameter");
         Objects.requireNonNull(toCurrency, "Currency is a mandatory parameter");
         Double exchangeRate = bank.getExchangeRate(this.getCurrency(), toCurrency)
-                .orElseThrow(() -> handleMissingExchangeRate(this.currency, toCurrency));
+            .orElseThrow(() -> handleMissingExchangeRate(this.currency, toCurrency));
         return new Money(this.amount * exchangeRate, toCurrency);
     }
 
@@ -59,26 +62,6 @@ public class Money {
         return currency;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Money money = (Money) o;
-        return Double.compare(money.amount, amount) == 0 && Objects.equals(currency, money.currency);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(amount, currency);
-    }
-
-    @Override
-    public String toString() {
-        return "Money{" +
-                "amount=" + amount +
-                ", currency=" + currency +
-                '}';
-    }
 
     private UnsupportedOperationException handleMissingExchangeRate(Currency from, Currency to) {
         return new UnsupportedOperationException(format("Conversion between %s and %s is not supported", from, to));

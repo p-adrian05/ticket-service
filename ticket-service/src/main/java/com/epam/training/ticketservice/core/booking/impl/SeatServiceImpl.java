@@ -39,8 +39,8 @@ public class SeatServiceImpl implements SeatService {
     public boolean isFreeToSeat(Set<SeatDto> toBookSeats, ScreeningEntity screeningEntity) throws BookingException {
         Objects.requireNonNull(toBookSeats, "Seats cannot be null when checking availability for booking");
         Objects
-            .requireNonNull(screeningEntity, "Screening cannot be null when checking seats availability for" +
-                " booking");
+            .requireNonNull(screeningEntity, "Screening cannot be null when checking seats availability for"
+                + " booking");
         Objects.requireNonNull(screeningEntity.getRoomEntity(),
             "Screening room  entity cannot be null when checking seats availability for booking");
         RoomEntity roomEntity = screeningEntity.getRoomEntity();

@@ -43,7 +43,7 @@ public class TicketPriceServiceImplTest {
         .addRate(HUF_CURRENCY, USD_CURRENCY, 0.0034, 249.3)
         .build());
 
-    private final static PriceEntity PRICE_ENTITY_EXTRA = PriceEntity
+    private static final PriceEntity PRICE_ENTITY_EXTRA = PriceEntity
         .builder()
         .value(1000)
         .name("Extra")
@@ -56,10 +56,10 @@ public class TicketPriceServiceImplTest {
         .moviePrices(Set.of(PRICE_ENTITY_EXTRA))
         .genreEntity(new GenreEntity(1, "Action")).build();
 
-    private final static SeatEntity SEAT_ENTITY_1 = SeatEntity.builder()
+    private static final SeatEntity SEAT_ENTITY_1 = SeatEntity.builder()
         .id(new SeatId(1, 2))
         .build();
-    private final static SeatEntity SEAT_ENTITY_2 = SeatEntity.builder()
+    private static final SeatEntity SEAT_ENTITY_2 = SeatEntity.builder()
         .id(new SeatId(3, 4))
         .build();
 
@@ -70,7 +70,7 @@ public class TicketPriceServiceImplTest {
         .roomPrices(Set.of(PRICE_ENTITY_EXTRA))
         .rows(5)
         .build();
-    private final static ScreeningEntity SCREENING_ENTITY = ScreeningEntity
+    private static final ScreeningEntity SCREENING_ENTITY = ScreeningEntity
         .builder()
         .movieEntity(MOVIE_ENTITY)
         .roomEntity(ROOM_ENTITY)
@@ -78,7 +78,7 @@ public class TicketPriceServiceImplTest {
         .startTime(LocalDateTime.of(2021, 4, 28, 15, 12))
         .screeningPrices(new HashSet<>())
         .build();
-    private final static BookingDto BOOKING_DTO = BookingDto.builder()
+    private static final BookingDto BOOKING_DTO = BookingDto.builder()
         .screening(BasicScreeningDto.builder()
             .time(LocalDateTime.of(2021, 4, 28, 15, 12))
             .movieName("Test")
@@ -87,7 +87,7 @@ public class TicketPriceServiceImplTest {
         .seats(Set.of(SeatDto.of(1, 2), SeatDto.of(3, 4)))
         .build();
 
-    private final static UserEntity USER_ENTITY = UserEntity.builder()
+    private static final UserEntity USER_ENTITY = UserEntity.builder()
         .username("username")
         .role(UserEntity.Role.USER)
         .password("pass")
@@ -224,7 +224,7 @@ public class TicketPriceServiceImplTest {
     }
 
     @Test
-    public void testCalculatePriceForTicketShouldCallSeatServiceAndReturnEmptyTicketPriceWhenSeatServiceReturnEmptySeatPrice()
+    public void testCalculatePriceForTicketShouldReturnEmptyTicketPriceWhenSeatServiceReturnEmptySeatPrice()
         throws BookingException {
         // Given
         Mockito.when(screeningRepository

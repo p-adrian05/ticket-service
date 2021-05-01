@@ -28,7 +28,7 @@ public class StaticBank implements Bank {
     public Optional<Double> getExchangeRate(Currency from, Currency to) {
         Objects.requireNonNull(from, "From is a mandatory field of StaticBank");
         Objects.requireNonNull(to, "To is a mandatory field of StaticBank");
-        if(from.equals(to)) {
+        if (from.equals(to)) {
             return Optional.of(1D);
         }
         return Optional.ofNullable(exchangeRates.get(from, to));

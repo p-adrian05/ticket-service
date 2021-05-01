@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import lombok.ToString;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -29,7 +28,8 @@ public class TicketDto {
 
     @Override
     public String toString() {
-        return String.format("Seats %s, on %s in room %s starting at %s for %s HUF ",seats,screening.getMovieName(),screening.getRoomName(), screening.getTime().format(
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),price);
+        return String.format("Seats %s, on %s in room %s starting at %s for %s HUF ", seats, screening.getMovieName(),
+            screening.getRoomName(), screening.getTime().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), price);
     }
 }

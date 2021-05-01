@@ -54,17 +54,17 @@ public class ScreeningEntity {
     @Column
     private LocalDateTime endTime;
 
-    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "screenings")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "screenings")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
 
-    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats;
 
-    public List<PriceEntity> prices(){
+    public List<PriceEntity> prices() {
         List<PriceEntity> prices = new LinkedList<>();
         prices.addAll(screeningPrices);
         prices.addAll(roomEntity.getRoomPrices());

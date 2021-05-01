@@ -35,10 +35,10 @@ public class SeatServiceImplTest {
         .title("Test1 title")
         .genreEntity(new GenreEntity(1, "Action")).build();
 
-    private final static SeatEntity SEAT_ENTITY_1 = SeatEntity.builder()
+    private static final SeatEntity SEAT_ENTITY_1 = SeatEntity.builder()
         .id(new SeatId(1, 2))
         .build();
-    private final static SeatEntity SEAT_ENTITY_2 = SeatEntity.builder()
+    private static final SeatEntity SEAT_ENTITY_2 = SeatEntity.builder()
         .id(new SeatId(3, 4))
         .build();
     private static final RoomEntity ROOM_ENTITY = RoomEntity.builder()
@@ -47,7 +47,7 @@ public class SeatServiceImplTest {
         .name("A1")
         .rows(5)
         .build();
-    private final static ScreeningEntity SCREENING_ENTITY = ScreeningEntity
+    private static final ScreeningEntity SCREENING_ENTITY = ScreeningEntity
         .builder()
         .movieEntity(MOVIE_ENTITY)
         .roomEntity(ROOM_ENTITY)
@@ -59,7 +59,7 @@ public class SeatServiceImplTest {
         .price(1500.0)
         .currency("HUF")
         .build();
-    private final static PriceEntity PRICE_ENTITY = PriceEntity
+    private static final PriceEntity PRICE_ENTITY = PriceEntity
         .builder()
         .value(1500)
         .name("Base")
@@ -153,7 +153,7 @@ public class SeatServiceImplTest {
         underTest.bookSeatsToTicket(seats, TICKET_ENTITY, SCREENING_ENTITY);
         // Then
         Mockito.verify(seatRepository).saveAll(seatEntities);
-        Mockito.verify(priceRepository,Mockito.times(2)).findByName(PRICE_ENTITY.getName());
+        Mockito.verify(priceRepository, Mockito.times(2)).findByName(PRICE_ENTITY.getName());
         Mockito.verifyNoMoreInteractions(seatRepository);
         Mockito.verifyNoMoreInteractions(priceRepository);
     }

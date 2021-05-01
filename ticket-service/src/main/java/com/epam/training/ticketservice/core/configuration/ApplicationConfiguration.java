@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationConfiguration {
     @Bean
-    public Bank bank(){
+    public Bank bank() {
         return StaticBank.of(() -> new StaticExchangeRates.Builder()
             .addRate("HUF", "EUR", 0.0028, 360)
             .addRate("HUF", "USD", 0.0033, 300)
