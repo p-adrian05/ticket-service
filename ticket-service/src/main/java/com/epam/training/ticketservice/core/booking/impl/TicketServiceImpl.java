@@ -1,24 +1,23 @@
 package com.epam.training.ticketservice.core.booking.impl;
 
-import com.epam.training.ticketservice.core.booking.SeatService;
+import com.epam.training.ticketservice.core.booking.TicketPriceCalculator;
+import com.epam.training.ticketservice.core.booking.TicketService;
 import com.epam.training.ticketservice.core.booking.exceptions.BookingException;
 import com.epam.training.ticketservice.core.booking.model.BookingDto;
-import com.epam.training.ticketservice.core.booking.persistence.repository.TicketRepository;
-import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
-import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
-import com.epam.training.ticketservice.core.user.persistence.repository.UserRepository;
-import com.epam.training.ticketservice.core.booking.TicketService;
 import com.epam.training.ticketservice.core.booking.model.SeatDto;
 import com.epam.training.ticketservice.core.booking.model.TicketDto;
 import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
-import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
-import com.epam.training.ticketservice.core.screening.persistence.entity.ScreeningEntity;
-import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
+import com.epam.training.ticketservice.core.booking.persistence.repository.TicketRepository;
+import com.epam.training.ticketservice.core.finance.money.Money;
+import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
+import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.core.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
+import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -28,83 +27,66 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TicketServiceImpl implements TicketService {
 
-    private final ScreeningRepository screeningRepository;
     private final UserRepository userRepository;
-    private final SeatService seatService;
+    private final TicketPriceCalculator ticketPriceCalculator;
     private final TicketRepository ticketRepository;
 
     @Override
     @Transactional
-    public TicketDto book(BookingDto bookingDto, String username) throws BookingException {
+    public TicketDto book(BookingDto bookingDto, String username, String currency) throws BookingException {
         Objects.requireNonNull(bookingDto, "BookingDto cannot be null");
         Objects.requireNonNull(bookingDto.getScreening(), "BookingDto Screening cannot be null");
         Objects.requireNonNull(bookingDto.getSeats(), "BookingDto Seats cannot be null");
         Objects.requireNonNull(username, "Username cannot be null");
-        Optional<ScreeningEntity> screeningEntity = screeningRepository
-            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                bookingDto.getScreening().getMovieName(),
-                bookingDto.getScreening().getRoomName(),
-                bookingDto.getScreening().getTime());
-        if (screeningEntity.isEmpty()) {
-            throw new BookingException(String.format("Screening not exists %s", bookingDto.getScreening()));
-        }
+        Objects.requireNonNull(username, "Currency cannot be null");
+        Currency bookingCurrency = Currency.getInstance(currency);
         Optional<UserEntity> accountEntity = userRepository.findByUsername(username);
         if (accountEntity.isEmpty()) {
-            throw new BookingException(String.format("User not exists %s",username));
+            throw new BookingException(String.format("User not exists %s", username));
         }
-        int price = calculatePrice(screeningEntity.get(), bookingDto.getSeats());
         TicketEntity ticketEntity = TicketEntity
             .builder()
             .userEntity(accountEntity.get())
-            .screeningEntity(screeningEntity.get())
-            .price(price).build();
-        TicketEntity createdTicket = ticketRepository.save(ticketEntity);
-        seatService.bookSeatsToTicket(bookingDto.getSeats(), createdTicket);
+            .build();
+        TicketEntity cratedTicket = ticketRepository.save(ticketEntity);
+        log.debug(String.format("Created empty Ticket: %s",ticketEntity));
+        Optional<Money> ticketPrice =
+            ticketPriceCalculator.calculatePriceForTicket(ticketEntity, bookingDto, bookingCurrency);
+        if (ticketPrice.isPresent()) {
+            cratedTicket.setPrice(ticketPrice.get().getAmount());
+            cratedTicket.setCurrency(ticketPrice.get().getCurrency().toString());
 
-        return TicketDto.builder()
-            .screening(bookingDto.getScreening())
-            .price(createdTicket.getPrice())
-            .username(username)
-            .seats(bookingDto.getSeats()).build();
+            TicketDto resultTicketDto = TicketDto.builder()
+                .screening(bookingDto.getScreening())
+                .username(username)
+                .price(ticketPrice.get())
+                .seats(bookingDto.getSeats())
+                .build();
+            log.debug(String.format("Created ticket: %s",resultTicketDto));
+            return resultTicketDto;
+        }
+        throw new BookingException("Failed to book ticket");
     }
-
 
     @Override
-    public Optional<Integer> showPrice(BookingDto bookingDto) throws BookingException {
-        Optional<ScreeningEntity> screeningEntity = screeningRepository
-            .findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
-                bookingDto.getScreening().getMovieName(),
-                bookingDto.getScreening().getRoomName(),
-                bookingDto.getScreening().getTime());
-        if (screeningEntity.isPresent()) {
-            if (seatService.isFreeToSeat(bookingDto.getSeats(), screeningEntity.get())) {
-                return Optional.of(calculatePrice(screeningEntity.get(), bookingDto.getSeats()));
-            }
-        }
-        return Optional.empty();
+    public Optional<Money> showPrice(BookingDto bookingDto, String currency) throws BookingException {
+        Objects.requireNonNull(bookingDto, "BookingDto cannot be null");
+        Objects.requireNonNull(currency, "Currency cannot be null");
+        return ticketPriceCalculator.calculatePriceForBooking(bookingDto, Currency.getInstance(currency));
     }
+
     @Override
     public List<TicketDto> getTicketsByUsername(String username) {
+        Objects.requireNonNull(username, "Username cannot be null");
         Set<TicketEntity> ticketEntities =
             new HashSet<>(ticketRepository.findTicketEntitiesByUserEntityUsername(username));
         return ticketEntities.stream().map((ticketEntity) -> convertTicketEntityToDto(ticketEntity, username))
             .collect(Collectors.toList());
     }
 
-    private Integer calculatePrice(ScreeningEntity screeningEntity, Set<SeatDto> seats) {
-        int seatPrice = seatService.calculateSeatPrice(seats);
-        int moviePrice = mapPricesToValue(screeningEntity.getMovieEntity().getMoviePrices());
-        int roomPrice = mapPricesToValue(screeningEntity.getRoomEntity().getRoomPrices());
-        int screeningPrice = mapPricesToValue(screeningEntity.getScreeningPrices());
-        return moviePrice + roomPrice + screeningPrice + seatPrice;
-    }
-
-    private int mapPricesToValue(Set<PriceEntity> prices) {
-        Optional<Integer> priceValue = prices.stream().map(PriceEntity::getValue).reduce((Integer::sum));
-        return priceValue.orElse(0);
-    }
 
     private TicketDto convertTicketEntityToDto(TicketEntity ticketEntity, String username) {
         return TicketDto.builder()
@@ -117,7 +99,7 @@ public class TicketServiceImpl implements TicketService {
                 .time(ticketEntity.getScreeningEntity().getStartTime())
                 .build())
             .username(username)
-            .price(ticketEntity.getPrice())
+            .price(new Money(ticketEntity.getPrice(), Currency.getInstance(ticketEntity.getCurrency())))
             .build();
     }
 

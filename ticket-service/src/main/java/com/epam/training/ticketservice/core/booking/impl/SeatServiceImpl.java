@@ -2,7 +2,6 @@ package com.epam.training.ticketservice.core.booking.impl;
 
 import com.epam.training.ticketservice.core.booking.SeatService;
 import com.epam.training.ticketservice.core.booking.exceptions.BookingException;
-import com.epam.training.ticketservice.core.booking.model.BookingDto;
 import com.epam.training.ticketservice.core.booking.model.SeatDto;
 import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntity;
 import com.epam.training.ticketservice.core.booking.persistence.entity.SeatId;
@@ -10,6 +9,7 @@ import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEnt
 
 import com.epam.training.ticketservice.core.booking.persistence.repository.SeatRepository;
 
+import com.epam.training.ticketservice.core.finance.money.Money;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
 import com.epam.training.ticketservice.core.price.persistence.repository.PriceRepository;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
-
+import java.util.Currency;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,14 +37,22 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public boolean isFreeToSeat(Set<SeatDto> toBookSeats, ScreeningEntity screeningEntity) throws BookingException {
+        Objects.requireNonNull(toBookSeats, "Seats cannot be null when checking availability for booking");
+        Objects
+            .requireNonNull(screeningEntity, "Screening cannot be null when checking seats availability for" +
+                " booking");
+        Objects.requireNonNull(screeningEntity.getRoomEntity(),
+            "Screening room  entity cannot be null when checking seats availability for booking");
         RoomEntity roomEntity = screeningEntity.getRoomEntity();
+        log.debug(String
+            .format("Checking seats: %s availability for booking in Screening: %s", toBookSeats, screeningEntity));
         Set<SeatDto> bookedSeatsDto = convertSeatEntitiesToDto(screeningEntity.getSeats());
         for (SeatDto seatDto : toBookSeats) {
             if (bookedSeatsDto.contains(seatDto)) {
-               throw new BookingException(String.format("Seat %s is already taken",seatDto));
+                throw new BookingException(String.format("Seat %s is already taken", seatDto));
             } else if (!isSeatExists(seatDto.getColumn(), roomEntity.getColumns())
                 || !isSeatExists(seatDto.getRow(), roomEntity.getRows())) {
-                throw new BookingException(String.format("Seat %s does not exist in this room",seatDto));
+                throw new BookingException(String.format("Seat %s does not exist in this room", seatDto));
             }
         }
         return true;
@@ -55,34 +65,46 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void bookSeatsToTicket(Set<SeatDto> seats,TicketEntity ticketEntity) throws BookingException {
-        if (isFreeToSeat(seats, ticketEntity.getScreeningEntity())) {
-                PriceEntity priceEntity = getSeatPriceEntity();
-                Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
-                    SeatEntity.builder()
-                        .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
-                        .ticketEntity(ticketEntity)
-                        .screeningEntity(ticketEntity.getScreeningEntity())
-                        .priceEntity(priceEntity).build())
-                    .collect(Collectors.toSet());
-                seatRepository.saveAll(seatEntities);
-            }
+    public Optional<Money> bookSeatsToTicket(Set<SeatDto> seats, TicketEntity ticketEntity,
+                                             ScreeningEntity screeningEntity) throws BookingException {
+        Objects.requireNonNull(seats, "Seats cannot be null for booking seats");
+        Objects.requireNonNull(ticketEntity, "Ticket entity cannot be null for booking seats");
+        Objects.requireNonNull(screeningEntity,
+            "Ticket's screening entity cannot be null for booking seats");
+        Optional<PriceEntity> priceEntity = getBasePriceEntity();
+        if (isFreeToSeat(seats, screeningEntity) && priceEntity.isPresent()) {
+            ticketEntity.setScreeningEntity(screeningEntity);
+            Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
+                SeatEntity.builder()
+                    .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
+                    .ticketEntity(ticketEntity)
+                    .screeningEntity(ticketEntity.getScreeningEntity())
+                    .priceEntity(priceEntity.get()).build())
+                .collect(Collectors.toSet());
+            log.debug(
+                String.format("Booked Seats: %s to Screening: %s", seatEntities, ticketEntity.getScreeningEntity()));
+            seatRepository.saveAll(seatEntities);
+            return Optional.of(calculateSeatPrice(seats));
+        }
+        return Optional.empty();
     }
 
 
     @Override
-    public int calculateSeatPrice(Set<SeatDto> seats) {
-        return calculateSeatPrice(seats, getSeatPriceEntity());
+    public Money calculateSeatPrice(Set<SeatDto> seats) {
+        Money price = getSeatPrice().multiply(seats.size());
+        log.debug(String.format("Calculated price: %s for seats: %s", price, seats));
+        return price;
     }
 
-    private int calculateSeatPrice(Set<SeatDto> seats, PriceEntity priceEntity) {
-        return priceEntity.getValue() * seats.size();
+    private Money getSeatPrice() {
+        Optional<PriceEntity> priceEntity = getBasePriceEntity();
+        return priceEntity.map(entity -> new Money(entity.getValue(), Currency.getInstance(entity.getCurrency())))
+            .orElseGet(() -> new Money(1500, Currency.getInstance("HUF")));
     }
 
-    private PriceEntity getSeatPriceEntity() {
-        return priceRepository.findByName("Base")
-            .orElseGet(
-                () -> priceRepository.save(PriceEntity.builder().value(1500).name("Base").currency("HUF").build()));
+    private Optional<PriceEntity> getBasePriceEntity() {
+        return priceRepository.findByName("Base");
     }
 
     private boolean isSeatExists(int seatIndex, int max) {

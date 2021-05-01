@@ -48,5 +48,8 @@ public class TicketEntity {
     private UserEntity userEntity;
 
     @Column
-    private Integer price;
+    private Double price;
+    @Column
+    private String currency;
+
 }
