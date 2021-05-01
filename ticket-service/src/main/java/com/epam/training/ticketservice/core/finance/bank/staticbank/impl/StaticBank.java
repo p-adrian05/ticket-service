@@ -19,7 +19,7 @@ public class StaticBank implements Bank {
         return new StaticBank(exchangeRateSupplier.get());
     }
 
-    StaticBank(StaticExchangeRates exchangeRates) {
+    public StaticBank(StaticExchangeRates exchangeRates) {
         Objects.requireNonNull(exchangeRates, "StaticExchangeRates is a mandatory field of StaticBank");
         this.exchangeRates = exchangeRates;
     }
