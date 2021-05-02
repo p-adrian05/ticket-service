@@ -67,4 +67,8 @@ public class Money {
         return new UnsupportedOperationException(format("Conversion between %s and %s is not supported", from, to));
     }
 
+    @Override
+    public String toString() {
+        return (int)this.amount + " " + this.currency.toString();
+    }
 }

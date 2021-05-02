@@ -1,5 +1,7 @@
 package com.epam.training.ticketservice.ui.command;
 
+import com.epam.training.ticketservice.core.booking.TicketService;
+import com.epam.training.ticketservice.core.booking.model.TicketDto;
 import com.epam.training.ticketservice.core.user.LoginService;
 import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.user.exception.UserAlreadyExistsException;
@@ -11,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @ShellComponent
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ public class UserCommand {
 
     private final UserService userService;
     private final LoginService loginService;
+    private final TicketService ticketService;
 
     @ShellMethod(value = "Sign In Privileged", key = "sign in privileged")
     public String signInPrivileged(String username, String password) {
@@ -38,11 +44,27 @@ public class UserCommand {
     }
 
     @ShellMethod(value = "Describe account", key = "describe account")
-    public String describeAccount() {
-        return handleError(loginService::getLoggedInUser, (userDto) -> userDto.getRole().equals(UserEntity.Role.ADMIN)
-                ? String.format("Signed in with privileged account '%s'", userDto.getUsername()) :
-                String.format("Signed in with account '%s'", userDto.getUsername()),
-            "You are not signed in");
+    public List<String> describeAccount() {
+        Optional<UserDto> userDto = loginService.getLoggedInUser();
+        List<String> messages = new LinkedList<>();
+        if (userDto.isPresent()) {
+            messages.add(
+                userDto.get().getRole().equals(UserEntity.Role.ADMIN)
+                    ? String.format("Signed in with privileged account '%s'", userDto.get().getUsername()) :
+                    String.format("Signed in with account '%s'", userDto.get().getUsername()));
+
+            List<TicketDto> tickets = ticketService.getTicketsByUsername(userDto.get().getUsername());
+            List<String> ticketsString = tickets.stream().map(TicketDto::toString).collect(Collectors.toList());
+            if (tickets.size() == 0) {
+                messages.add("You have not booked any tickets yet");
+            } else {
+                messages.add("Your previous bookings are");
+                messages.addAll(ticketsString);
+            }
+        } else {
+            messages.add("You are not signed in");
+        }
+        return messages;
     }
 
     @ShellMethod(value = "Account sign up", key = "sign up")

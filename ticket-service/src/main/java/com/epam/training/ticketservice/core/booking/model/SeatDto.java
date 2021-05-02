@@ -4,8 +4,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import org.apache.logging.log4j.message.StringFormattedMessage;
+
+import java.util.Collection;
 
 @Builder
 @EqualsAndHashCode
@@ -22,6 +22,20 @@ public class SeatDto {
 
     @Override
     public String toString() {
-        return String.format("(%s,%s)",row,column);
+        return String.format("(%s,%s)", row, column);
+    }
+
+    public static String seatsToString(Collection<SeatDto> seats) {
+        StringBuilder builder = new StringBuilder();
+        int seatsSize = seats.size();
+        for (SeatDto seatDto : seats) {
+            seatsSize--;
+            builder.append(seatDto);
+            if (seatsSize > 0) {
+                builder.append(", ");
+
+            }
+        }
+        return builder.toString();
     }
 }
