@@ -41,7 +41,7 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
         if (seatService.isFreeToSeat(bookingDto.getSeats(), screeningEntity)) {
             Money price =
                 calculateAggregatedPrice(screeningEntity, () -> seatService.calculateSeatPrice(bookingDto.getSeats()),
-                    currency);
+                    currency).multiply(bookingDto.getSeats().size());
             log.debug(String.format("Calculated price: %s for booking:  %s", price, bookingDto));
             return Optional.of(price);
         }
@@ -59,7 +59,9 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
         Optional<Money> seatPrice =
             seatService.bookSeatsToTicket(bookingDto.getSeats(), ticketEntity, screeningEntity);
         if (seatPrice.isPresent()) {
-            Money price = calculateAggregatedPrice(screeningEntity, seatPrice::get, currency);
+            Money price =
+                calculateAggregatedPrice(screeningEntity, seatPrice::get, currency)
+                    .multiply(bookingDto.getSeats().size());
             log.debug(
                 String.format("Calculated price: %s for ticket: %s with booking: %s", price, ticketEntity, bookingDto));
             return Optional.of(price);

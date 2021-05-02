@@ -60,9 +60,11 @@ public class PriceServiceImpl implements PriceService {
         Objects.requireNonNull(priceDto, "Price cannot be null");
         Objects.requireNonNull(priceDto.getName(), "Price name cannot be null");
         Objects.requireNonNull(priceDto.getValue(), "Price value cannot be null");
+        Objects.requireNonNull(priceDto.getCurrency(), "Price currency cannot be null");
         PriceEntity priceEntity = getPriceEntity(priceDto.getName());
         log.debug("Price before update: {}", priceEntity);
         priceEntity.setValue(priceDto.getValue());
+        priceEntity.setCurrency(priceDto.getCurrency().toString());
         priceRepository.save(priceEntity);
         log.debug("Updated Price is : {}", priceEntity);
     }
