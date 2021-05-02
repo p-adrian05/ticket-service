@@ -51,13 +51,13 @@ public class TicketServiceImpl implements TicketService {
             .builder()
             .userEntity(accountEntity.get())
             .build();
-        TicketEntity cratedTicket = ticketRepository.save(ticketEntity);
-        log.debug(String.format("Created empty Ticket: %s",ticketEntity));
+        TicketEntity createdTicket = ticketRepository.save(ticketEntity);
+        log.debug(String.format("Created empty Ticket: %s", ticketEntity));
         Optional<Money> ticketPrice =
             ticketPriceCalculator.calculatePriceForTicket(ticketEntity, bookingDto, bookingCurrency);
         if (ticketPrice.isPresent()) {
-            cratedTicket.setPrice(ticketPrice.get().getAmount());
-            cratedTicket.setCurrency(ticketPrice.get().getCurrency().toString());
+            createdTicket.setPrice(ticketPrice.get().getAmount());
+            createdTicket.setCurrency(ticketPrice.get().getCurrency().toString());
 
             TicketDto resultTicketDto = TicketDto.builder()
                 .screening(bookingDto.getScreening())
@@ -65,7 +65,7 @@ public class TicketServiceImpl implements TicketService {
                 .price(ticketPrice.get())
                 .seats(bookingDto.getSeats())
                 .build();
-            log.debug(String.format("Created ticket: %s",resultTicketDto));
+            log.debug(String.format("Created ticket: %s", resultTicketDto));
             return resultTicketDto;
         }
         throw new BookingException("Failed to book ticket");
@@ -81,9 +81,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketDto> getTicketsByUsername(String username) {
         Objects.requireNonNull(username, "Username cannot be null");
-        Set<TicketEntity> ticketEntities =
-            new HashSet<>(ticketRepository.findTicketEntitiesByUserEntityUsername(username));
-        return ticketEntities.stream().map((ticketEntity) -> convertTicketEntityToDto(ticketEntity, username))
+        return ticketRepository.findTicketEntitiesByUserEntityUsername(username).stream()
+            .map((ticketEntity) -> convertTicketEntityToDto(ticketEntity, username))
             .collect(Collectors.toList());
     }
 

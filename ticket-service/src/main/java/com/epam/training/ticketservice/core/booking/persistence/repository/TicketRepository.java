@@ -7,11 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
+import java.util.Set;
 
 public interface TicketRepository extends CrudRepository<TicketEntity, Integer> {
 
     @Query(value = "select t from TicketEntity t join fetch t.seats join fetch"
         + " t.screeningEntity where t.userEntity.username =:username")
-    List<TicketEntity> findTicketEntitiesByUserEntityUsername(@Param("username") String username);
+    Set<TicketEntity> findTicketEntitiesByUserEntityUsername(@Param("username") String username);
 
 }

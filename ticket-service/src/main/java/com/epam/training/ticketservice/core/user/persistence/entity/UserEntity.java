@@ -3,7 +3,9 @@ package com.epam.training.ticketservice.core.user.persistence.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +30,7 @@ public class UserEntity {
     @Column(unique = true)
     private String username;
     @Column
+    @ToString.Exclude
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
