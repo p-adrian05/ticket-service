@@ -34,17 +34,17 @@ public class MovieCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin create Movie", key = "create movieEntity")
-    public String createMovie(String title, String genre, int duration){
+    public String createMovie(String title, String genre, int duration) {
         MovieDto movieDto = MovieDto.builder()
             .genre(genre)
             .title(title)
             .duration(duration)
             .build();
-        try{
+        try {
             movieService.createMovie(movieDto);
             return movieDto.toString();
-        }catch (MovieAlreadyExistsException e){
-            log.error("Error during creating movie: "+e.getMessage());
+        } catch (MovieAlreadyExistsException e) {
+            log.error("Error during creating movie: " + e.getMessage());
             return e.getMessage();
         }
 
@@ -52,35 +52,35 @@ public class MovieCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin delete Movie", key = "delete movieEntity")
-    public String deleteMovie(String title){
-        try{
+    public String deleteMovie(String title) {
+        try {
             movieService.deleteMovie(title);
             return "Successful deletion";
-        }catch (UnknownMovieException e){
-            log.error("Error during deleting movie: "+e.getMessage());
+        } catch (UnknownMovieException e) {
+            log.error("Error during deleting movie: " + e.getMessage());
             return e.getMessage();
         }
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin update Movie", key = "update movieEntity")
-    public String updateMovie(String title, String genre, int duration){
+    public String updateMovie(String title, String genre, int duration) {
         MovieDto movieDto = MovieDto.builder()
             .genre(genre)
             .title(title)
             .duration(duration)
             .build();
-        try{
+        try {
             movieService.updateMovie(movieDto);
             return movieDto.toString();
-        }catch (UnknownMovieException e){
-            log.error("Error during updating movie: "+e.getMessage());
+        } catch (UnknownMovieException e) {
+            log.error("Error during updating movie: " + e.getMessage());
             return e.getMessage();
         }
     }
 
     private Availability isAvailable() {
-       return userAvailability.isAdminAvailable();
+        return userAvailability.isAdminAvailable();
     }
 
 }

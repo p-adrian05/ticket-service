@@ -73,7 +73,7 @@ public class TicketBookingCommand {
     }
 
     private Availability isAvailable() {
-       return userAvailability.isUserAvailable();
+        return userAvailability.isUserAvailable();
     }
 
 }

@@ -35,7 +35,7 @@ public class PriceCommand {
                 .currency(Currency.getInstance("HUF"))
                 .build());
         } catch (UnknownPriceException e) {
-            log.error("Error during updating base price: "+e.getMessage());
+            log.error("Error during updating base price: " + e.getMessage());
             return e.getMessage();
         }
 
@@ -53,22 +53,24 @@ public class PriceCommand {
         try {
             priceService.createPrice(priceDto);
         } catch (PriceAlreadyExistsException e) {
-            log.error("Error during creating price component: "+e.getMessage());
+            log.error("Error during creating price component: " + e.getMessage());
             return e.getMessage();
         }
         return String.format("Successful creation, new price component is %s HUF", priceDto);
     }
+
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin attach price component to room", key = "attach price component to room")
     public String attachPriceToRoom(String name, String roomName) {
         try {
             priceService.attachRoom(roomName, name);
         } catch (UnknownPriceException | AttachPriceException e) {
-            log.error("Error during attaching price component to room "+e.getMessage());
+            log.error("Error during attaching price component to room " + e.getMessage());
             return e.getMessage();
         }
         return "Successful attach";
     }
+
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin attach price component to screening", key = "attach price component to screening")
     public String attachPriceToScreening(String name, String movieName, String roomName, LocalDateTime time) {
@@ -79,25 +81,26 @@ public class PriceCommand {
                 .roomName(roomName)
                 .build(), name);
         } catch (UnknownPriceException | AttachPriceException e) {
-            log.error("Error during attaching price component to screening "+e.getMessage());
+            log.error("Error during attaching price component to screening " + e.getMessage());
             return e.getMessage();
         }
         return "Successful attach";
     }
+
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin attach price component to movie", key = "attach price component to movieEntity")
     public String attachPriceToMovie(String name, String movieName) {
         try {
             priceService.attachMovie(movieName, name);
         } catch (UnknownPriceException | AttachPriceException e) {
-            log.error("Error during attaching price component to movie "+e.getMessage());
+            log.error("Error during attaching price component to movie " + e.getMessage());
             return e.getMessage();
         }
         return "Successful attach";
     }
 
     private Availability isAvailable() {
-       return userAvailability.isAdminAvailable();
+        return userAvailability.isAdminAvailable();
     }
 
 }

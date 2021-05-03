@@ -16,14 +16,14 @@ public class UserAvailability {
     private final LoginService loginService;
 
     public Availability isUserAvailable() {
-        return isAvailable(UserEntity.Role.USER,"You are not a user");
+        return isAvailable(UserEntity.Role.USER, "You are not a user");
     }
 
     public Availability isAdminAvailable() {
-       return isAvailable(UserEntity.Role.ADMIN,"You are not an admin user");
+        return isAvailable(UserEntity.Role.ADMIN, "You are not an admin user");
     }
 
-    private Availability isAvailable(UserEntity.Role role,String authorizationFailedMessage){
+    private Availability isAvailable(UserEntity.Role role, String authorizationFailedMessage) {
         Optional<UserDto> loggedInUser = loginService.getLoggedInUser();
         if (loggedInUser.isEmpty()) {
             return Availability.unavailable("Not logged in");

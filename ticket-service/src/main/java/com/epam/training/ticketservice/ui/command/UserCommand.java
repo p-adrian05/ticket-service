@@ -59,7 +59,7 @@ public class UserCommand {
         return messages;
     }
 
-    private List<String> getTicketsMessage(String username){
+    private List<String> getTicketsMessage(String username) {
         List<String> messages = new LinkedList<>();
         List<TicketDto> tickets = ticketService.getTicketsByUsername(username);
         if (tickets.size() == 0) {

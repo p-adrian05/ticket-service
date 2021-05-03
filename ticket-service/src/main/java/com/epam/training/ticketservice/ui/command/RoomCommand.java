@@ -34,7 +34,7 @@ public class RoomCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin create Room", key = "create room")
-    public String crateRoom(String name, int rowNum, int colNum){
+    public String crateRoom(String name, int rowNum, int colNum) {
         RoomDto roomDto = RoomDto.builder()
             .name(name)
             .columns(colNum)
@@ -43,26 +43,26 @@ public class RoomCommand {
             roomService.createRoom(roomDto);
             return roomDto.toString();
         } catch (RoomAlreadyExistsException e) {
-            log.error("Error during creating room: "+e.getMessage());
+            log.error("Error during creating room: " + e.getMessage());
             return e.getMessage();
         }
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin delete Movie", key = "delete room")
-    public String deleteRoom(String name){
+    public String deleteRoom(String name) {
         try {
             roomService.deleteRoom(name);
             return "Successful deletion";
         } catch (UnknownRoomException e) {
-            log.error("Error during deleting room: "+e.getMessage());
+            log.error("Error during deleting room: " + e.getMessage());
             return e.getMessage();
         }
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin update Room", key = "update room")
-    public String updateRoom(String name, int rowNum, int colNum)  {
+    public String updateRoom(String name, int rowNum, int colNum) {
         RoomDto roomDto = RoomDto.builder()
             .name(name)
             .columns(colNum)
@@ -71,8 +71,8 @@ public class RoomCommand {
             roomService.updateRoom(roomDto);
             return roomDto.toString();
         } catch (UnknownRoomException e) {
-            log.error("Error during updating room: "+e.getMessage());
-           return e.getMessage();
+            log.error("Error during updating room: " + e.getMessage());
+            return e.getMessage();
         }
     }
 

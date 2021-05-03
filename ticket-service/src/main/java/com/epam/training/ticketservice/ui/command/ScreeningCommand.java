@@ -51,22 +51,22 @@ public class ScreeningCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin delete Screening", key = "delete screening")
-    public String deleteScreening(String movieName, String roomName, LocalDateTime time){
+    public String deleteScreening(String movieName, String roomName, LocalDateTime time) {
         BasicScreeningDto basicScreeningDto = BasicScreeningDto.builder()
             .roomName(roomName)
             .movieName(movieName)
             .time(time).build();
-        try{
+        try {
             screeningService.deleteScreening(basicScreeningDto);
             return "Successful deletion";
-        }catch (UnknownScreeningException e){
+        } catch (UnknownScreeningException e) {
             return e.getMessage();
         }
 
     }
 
     private Availability isAvailable() {
-       return userAvailability.isAdminAvailable();
+        return userAvailability.isAdminAvailable();
     }
 
 }
