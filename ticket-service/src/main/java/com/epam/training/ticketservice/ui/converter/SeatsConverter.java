@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-class SeatsConverter implements Converter<String, Set<SeatDto>> {
+public class SeatsConverter implements Converter<String, Set<SeatDto>> {
 
     @Override
     public Set<SeatDto> convert(String source) {

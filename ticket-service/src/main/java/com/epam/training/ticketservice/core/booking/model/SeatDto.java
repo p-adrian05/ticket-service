@@ -2,6 +2,7 @@ package com.epam.training.ticketservice.core.booking.model;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,7 @@ public class SeatDto {
     }
 
     @Override
+    @Generated
     public String toString() {
         return String.format("(%s,%s)", row, column);
     }

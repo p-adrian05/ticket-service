@@ -3,10 +3,12 @@ package com.epam.training.ticketservice.core.configuration;
 import com.epam.training.ticketservice.core.finance.bank.Bank;
 import com.epam.training.ticketservice.core.finance.bank.staticbank.impl.StaticBank;
 import com.epam.training.ticketservice.core.finance.bank.staticbank.model.StaticExchangeRates;
+import lombok.Generated;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Generated
 public class ApplicationConfiguration {
     @Bean
     public Bank bank() {

@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.ui.configuration;
 
+import lombok.Generated;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 
@@ -7,6 +8,7 @@ import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Component;
 
 @Component
+@Generated
 public class CustomPromptProvider implements PromptProvider {
 
     @Override

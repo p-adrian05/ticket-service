@@ -159,6 +159,21 @@ public class SeatServiceImplTest {
     }
 
     @Test
+    public void testBookSeatsToTicketShouldReturnOptionalEmptyWhenPriceNotExists() throws BookingException {
+        // Given
+        Set<SeatDto> seats = Set.of(SeatDto.of(5, 5), SeatDto.of(4, 5));
+        Mockito.when(priceRepository.findByName(PRICE_ENTITY.getName()))
+            .thenReturn(Optional.empty());
+        // When
+        Optional<Money> actual = underTest.bookSeatsToTicket(seats, TICKET_ENTITY, SCREENING_ENTITY);
+        // Then
+        Assertions.assertEquals(Optional.empty(),actual);
+        Mockito.verify(priceRepository).findByName(PRICE_ENTITY.getName());
+        Mockito.verifyNoMoreInteractions(seatRepository);
+        Mockito.verifyNoMoreInteractions(priceRepository);
+    }
+
+    @Test
     public void testBookSeatsToTicketShouldCallSeatRepositoryWhenInputsSeatsNotValid() {
         // Given
         Set<SeatDto> seats = Set.of(SeatDto.of(1, 2), SeatDto.of(4, 5));

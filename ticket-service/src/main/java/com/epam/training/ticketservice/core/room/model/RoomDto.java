@@ -2,6 +2,7 @@ package com.epam.training.ticketservice.core.room.model;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +19,7 @@ public class RoomDto {
     private final Integer columns;
 
     @Override
+    @Generated
     public String toString() {
         return String.format("Room %s with %s seats, %s rows and %s columns", name, rows * columns, rows, columns);
     }

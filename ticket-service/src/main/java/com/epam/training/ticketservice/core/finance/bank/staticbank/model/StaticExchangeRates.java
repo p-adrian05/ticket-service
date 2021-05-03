@@ -1,6 +1,7 @@
 package com.epam.training.ticketservice.core.finance.bank.staticbank.model;
 
 import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,12 @@ public class StaticExchangeRates {
         this.exchangeRatesMap = exchangeRatesMap;
     }
 
+    @Generated
     public Double get(Currency from, Currency to) {
         return exchangeRatesMap.get(CurrencyPair.of(from, to));
     }
 
+    @Generated
     public static class Builder {
 
         private final Map<CurrencyPair, Double> exchangeRatesMap = new HashMap<>();

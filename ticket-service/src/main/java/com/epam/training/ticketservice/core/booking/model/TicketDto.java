@@ -4,6 +4,7 @@ import com.epam.training.ticketservice.core.finance.money.Money;
 import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.Getter;
 
 
@@ -27,6 +28,7 @@ public class TicketDto {
     }
 
     @Override
+    @Generated
     public String toString() {
         return String
             .format("Seats %s on %s in room %s starting at %s for %s", SeatDto.seatsToString(seats),
