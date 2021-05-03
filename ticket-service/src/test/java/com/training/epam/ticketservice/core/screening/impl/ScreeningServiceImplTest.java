@@ -270,7 +270,7 @@ public class ScreeningServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(ints = {30, 31, 32, 33, 34, 35, 38, 39})
-    public void testIsFreeToScreenShouldThrowScreeningCreationExceptionWhenScreeningIsOverlappingInBreakingPeriod(
+    public void testIsFreeToScreenShouldThrowScreeningCreationExceptionWhenScreeningStartIsOverlappingInBreakingPeriod(
         int minute) {
         // Given
         ScreeningEntity screeningEntity = ScreeningEntity.builder()
@@ -282,6 +282,33 @@ public class ScreeningServiceImplTest {
             .build();
         LocalDateTime start = LocalDateTime.of(2021, 4, 22, 11, minute);
         LocalDateTime end = LocalDateTime.of(2021, 4, 22, 14, 15);
+        Mockito.when(screeningRepository
+            .findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(
+                "A1", start.minusDays(1), end.plusDays(1)))
+            .thenReturn(List.of(screeningEntity));
+        // When
+        Exception ex = Assertions.assertThrows(ScreeningCreationException.class, () ->
+            underTest.isFreeToScreen("A1", start, end));
+        // Then
+        Assertions.assertEquals(CREATION_EXCEPTION_MESSAGE_2, ex.getMessage());
+        Mockito.verify(screeningRepository).findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(
+            "A1", start.minusDays(1), end.plusDays(1));
+        Mockito.verifyNoMoreInteractions(screeningRepository);
+    }
+    @ParameterizedTest
+    @ValueSource(ints = {31, 32, 33, 34, 35, 38, 39})
+    public void testIsFreeToScreenShouldThrowScreeningCreationExceptionWhenScreeningEndIsOverlappingInBreakingPeriod(
+        int minute) {
+        // Given
+        ScreeningEntity screeningEntity = ScreeningEntity.builder()
+            .movieEntity(MOVIE_ENTITY)
+            .roomEntity(ROOM_ENTITY)
+            .id(null)
+            .startTime(LocalDateTime.of(2021, 4, 22, 10, 40))
+            .endTime(LocalDateTime.of(2021, 4, 22, 11, 30))
+            .build();
+        LocalDateTime start = LocalDateTime.of(2021, 4, 22, 6, 57);
+        LocalDateTime end = LocalDateTime.of(2021, 4, 22, 10, minute);
         Mockito.when(screeningRepository
             .findScreeningEntitiesByRoomEntity_NameAndStartTimeAfterAndEndTimeBefore(
                 "A1", start.minusDays(1), end.plusDays(1)))
