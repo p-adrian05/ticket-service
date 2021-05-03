@@ -41,7 +41,7 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
         if (seatService.isFreeToSeat(bookingDto.getSeats(), screeningEntity)) {
             Money price =
                 calculateAggregatedPrice(screeningEntity, () -> seatService.calculateSeatPrice(bookingDto.getSeats()),
-                    currency).multiply(bookingDto.getSeats().size());
+                    bookingDto.getSeats().size()).to(currency, bank);
             log.debug(String.format("Calculated price: %s for booking:  %s", price, bookingDto));
             return Optional.of(price);
         }
@@ -60,8 +60,8 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
             seatService.bookSeatsToTicket(bookingDto.getSeats(), ticketEntity, screeningEntity);
         if (seatPrice.isPresent()) {
             Money price =
-                calculateAggregatedPrice(screeningEntity, seatPrice::get, currency)
-                    .multiply(bookingDto.getSeats().size());
+                calculateAggregatedPrice(screeningEntity, seatPrice::get, bookingDto.getSeats().size())
+                    .to(currency, bank);
             log.debug(
                 String.format("Calculated price: %s for ticket: %s with booking: %s", price, ticketEntity, bookingDto));
             return Optional.of(price);
@@ -84,8 +84,8 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
             () -> new BookingException(String.format("Screening not exists %s", basicScreeningDto)));
     }
 
-    private Money calculatePriceForScreening(List<PriceEntity> screeningPrices, Currency currency) {
-        Money aggregatedPrice = new Money(0D, currency);
+    private Money mapPriceEntitiesToMoney(List<PriceEntity> screeningPrices) {
+        Money aggregatedPrice = new Money(0D, Currency.getInstance("HUF"));
         for (PriceEntity priceEntity : screeningPrices) {
             aggregatedPrice = aggregatedPrice
                 .add(new Money(priceEntity.getValue(), Currency.getInstance(priceEntity.getCurrency())), bank);
@@ -94,10 +94,10 @@ public class TicketPriceServiceImpl implements TicketPriceCalculator {
     }
 
     private Money calculateAggregatedPrice(ScreeningEntity screeningEntity, Supplier<Money> seatPriceSupplier,
-                                           Currency currency) {
+                                           int seatsNumber) {
         Money seatPrice = seatPriceSupplier.get();
-        Money screeningPrice = calculatePriceForScreening(screeningEntity.prices(), currency);
-        return seatPrice.add(screeningPrice, bank).to(currency, bank);
+        Money screeningPrice = mapPriceEntitiesToMoney(screeningEntity.prices()).multiply(seatsNumber);
+        return seatPrice.add(screeningPrice, bank);
     }
 
 }

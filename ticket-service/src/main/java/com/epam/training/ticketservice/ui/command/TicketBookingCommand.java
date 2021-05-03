@@ -8,8 +8,7 @@ import com.epam.training.ticketservice.core.booking.model.TicketDto;
 import com.epam.training.ticketservice.core.finance.money.Money;
 import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import com.epam.training.ticketservice.core.user.LoginService;
-import com.epam.training.ticketservice.core.user.model.UserDto;
-import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.ui.util.UserAvailability;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.Availability;
@@ -18,7 +17,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,18 +26,17 @@ import java.util.Set;
 public class TicketBookingCommand {
 
     private final TicketService ticketService;
+    private final UserAvailability userAvailability;
     private final LoginService loginService;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "User create booking", key = "book")
-    public String crateScreening(String movieName, String roomName, String time, Set<SeatDto> seats) {
+    public String crateBooking(String movieName, String roomName, LocalDateTime time, Set<SeatDto> seats) {
         BookingDto bookingDto = BookingDto.builder()
             .screening(BasicScreeningDto.builder()
                 .roomName(roomName)
                 .movieName(movieName)
-                .time(LocalDateTime.parse(time, formatter))
+                .time(time)
                 .build())
             .seats(seats)
             .build();
@@ -50,40 +47,33 @@ public class TicketBookingCommand {
                 SeatDto.seatsToString(ticketDto.getSeats()),
                 ticketDto.getPrice());
         } catch (BookingException e) {
-            //log.error(e.getMessage());
             return e.getMessage();
         }
     }
 
     @ShellMethod(value = "show price for booking", key = "show price for")
-    public String showPrice(String movieName, String roomName, String time, Set<SeatDto> seats) {
+    public String showPrice(String movieName, String roomName, LocalDateTime time, Set<SeatDto> seats) {
         Optional<Money> price;
         try {
             price = ticketService.showPrice(BookingDto.builder()
                 .screening(BasicScreeningDto.builder()
                     .roomName(roomName)
                     .movieName(movieName)
-                    .time(LocalDateTime.parse(time, formatter))
+                    .time(time)
                     .build())
                 .seats(seats)
                 .build(), "HUF");
+            if (price.isPresent()) {
+                return String.format("The price for this booking would be %s", price.get());
+            }
         } catch (BookingException e) {
             return e.getMessage();
-        }
-        if (price.isPresent()) {
-            return String.format("The price for this booking would be %s", price.get());
         }
         return "Failed to show price";
     }
 
     private Availability isAvailable() {
-        Optional<UserDto> loggedInUser = loginService.getLoggedInUser();
-        if (loggedInUser.isEmpty()) {
-            return Availability.unavailable("Not logged in");
-        } else if (loggedInUser.get().getRole().equals(UserEntity.Role.USER)) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not a user");
+       return userAvailability.isUserAvailable();
     }
 
 }

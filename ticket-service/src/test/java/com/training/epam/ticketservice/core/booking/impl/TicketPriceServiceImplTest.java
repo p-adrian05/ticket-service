@@ -96,7 +96,7 @@ public class TicketPriceServiceImplTest {
         .id(null)
         .screeningEntity(SCREENING_ENTITY)
         .userEntity(USER_ENTITY)
-        .price(10000.0)
+        .price(7000.0)
         .currency("HUF")
         .build();
 

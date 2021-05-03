@@ -1,30 +1,27 @@
 package com.epam.training.ticketservice.ui.command;
 
-import com.epam.training.ticketservice.core.user.LoginService;
-import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.exceptions.MovieAlreadyExistsException;
 import com.epam.training.ticketservice.core.movie.exceptions.UnknownMovieException;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
-import com.epam.training.ticketservice.core.user.model.UserDto;
-import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.ui.util.UserAvailability;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ShellComponent
 @RequiredArgsConstructor
+@Slf4j
 public class MovieCommand {
 
     private final MovieService movieService;
-    private final LoginService loginService;
+    private final UserAvailability userAvailability;
 
     @ShellMethod(value = "Movie List", key = "list movies")
     public List<String> listMovies() {
@@ -37,42 +34,53 @@ public class MovieCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin create Movie", key = "create movieEntity")
-    public MovieDto createMovie(String title, String genre, int duration) throws MovieAlreadyExistsException {
+    public String createMovie(String title, String genre, int duration){
         MovieDto movieDto = MovieDto.builder()
             .genre(genre)
             .title(title)
             .duration(duration)
             .build();
-        movieService.createMovie(movieDto);
-        return movieDto;
+        try{
+            movieService.createMovie(movieDto);
+            return movieDto.toString();
+        }catch (MovieAlreadyExistsException e){
+            log.error("Error during creating movie: "+e.getMessage());
+            return e.getMessage();
+        }
+
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin delete Movie", key = "delete movieEntity")
-    public void deleteMovie(String title) throws UnknownMovieException {
-        movieService.deleteMovie(title);
+    public String deleteMovie(String title){
+        try{
+            movieService.deleteMovie(title);
+            return "Successful deletion";
+        }catch (UnknownMovieException e){
+            log.error("Error during deleting movie: "+e.getMessage());
+            return e.getMessage();
+        }
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin update Movie", key = "update movieEntity")
-    public MovieDto updateMovie(String title, String genre, int duration) throws UnknownMovieException {
+    public String updateMovie(String title, String genre, int duration){
         MovieDto movieDto = MovieDto.builder()
             .genre(genre)
             .title(title)
             .duration(duration)
             .build();
-        movieService.updateMovie(movieDto);
-        return movieDto;
+        try{
+            movieService.updateMovie(movieDto);
+            return movieDto.toString();
+        }catch (UnknownMovieException e){
+            log.error("Error during updating movie: "+e.getMessage());
+            return e.getMessage();
+        }
     }
 
     private Availability isAvailable() {
-        Optional<UserDto> loggedInUser = loginService.getLoggedInUser();
-        if (loggedInUser.isEmpty()) {
-            return Availability.unavailable("Not logged in");
-        } else if (loggedInUser.get().getRole().equals(UserEntity.Role.ADMIN)) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not an admin user");
+       return userAvailability.isAdminAvailable();
     }
 
 }

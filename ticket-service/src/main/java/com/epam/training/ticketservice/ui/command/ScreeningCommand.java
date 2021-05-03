@@ -1,35 +1,29 @@
 package com.epam.training.ticketservice.ui.command;
 
-import com.epam.training.ticketservice.core.user.LoginService;
-
 import com.epam.training.ticketservice.core.screening.ScreeningService;
 import com.epam.training.ticketservice.core.screening.exceptions.ScreeningCreationException;
 import com.epam.training.ticketservice.core.screening.exceptions.UnknownScreeningException;
 import com.epam.training.ticketservice.core.screening.model.BasicScreeningDto;
 import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
-import com.epam.training.ticketservice.core.user.model.UserDto;
-import com.epam.training.ticketservice.core.user.persistence.entity.UserEntity;
+import com.epam.training.ticketservice.ui.util.UserAvailability;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ShellComponent
 @RequiredArgsConstructor
+@Slf4j
 public class ScreeningCommand {
 
     private final ScreeningService screeningService;
-    private final LoginService loginService;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final UserAvailability userAvailability;
 
     @ShellMethod(value = "Screening List", key = "list screenings")
     public List<String> listScreenings() {
@@ -42,37 +36,37 @@ public class ScreeningCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin create Screening", key = "create screening")
-    public String crateScreening(String movieName, String roomName, String time) {
+    public String crateScreening(String movieName, String roomName, LocalDateTime time) {
         BasicScreeningDto basicScreeningDto = BasicScreeningDto.builder()
             .roomName(roomName)
             .movieName(movieName)
-            .time(LocalDateTime.parse(time, formatter)).build();
+            .time(time).build();
         try {
             screeningService.createScreening(basicScreeningDto);
+            return basicScreeningDto.toString();
         } catch (ScreeningCreationException ex) {
             return ex.getMessage();
         }
-        return basicScreeningDto.toString();
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(value = "Admin delete Screening", key = "delete screening")
-    public void deleteScreening(String movieName, String roomName, String time) throws UnknownScreeningException {
+    public String deleteScreening(String movieName, String roomName, LocalDateTime time){
         BasicScreeningDto basicScreeningDto = BasicScreeningDto.builder()
             .roomName(roomName)
             .movieName(movieName)
-            .time(LocalDateTime.parse(time, formatter)).build();
-        screeningService.deleteScreening(basicScreeningDto);
+            .time(time).build();
+        try{
+            screeningService.deleteScreening(basicScreeningDto);
+            return "Successful deletion";
+        }catch (UnknownScreeningException e){
+            return e.getMessage();
+        }
+
     }
 
     private Availability isAvailable() {
-        Optional<UserDto> loggedInUser = loginService.getLoggedInUser();
-        if (loggedInUser.isEmpty()) {
-            return Availability.unavailable("Not logged in");
-        } else if (loggedInUser.get().getRole().equals(UserEntity.Role.ADMIN)) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not an admin user");
+       return userAvailability.isAdminAvailable();
     }
 
 }

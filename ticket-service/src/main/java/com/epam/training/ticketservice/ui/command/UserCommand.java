@@ -52,17 +52,22 @@ public class UserCommand {
                 userDto.get().getRole().equals(UserEntity.Role.ADMIN)
                     ? String.format("Signed in with privileged account '%s'", userDto.get().getUsername()) :
                     String.format("Signed in with account '%s'", userDto.get().getUsername()));
-
-            List<TicketDto> tickets = ticketService.getTicketsByUsername(userDto.get().getUsername());
-            List<String> ticketsString = tickets.stream().map(TicketDto::toString).collect(Collectors.toList());
-            if (tickets.size() == 0) {
-                messages.add("You have not booked any tickets yet");
-            } else {
-                messages.add("Your previous bookings are");
-                messages.addAll(ticketsString);
-            }
+            messages.addAll(getTicketsMessage(userDto.get().getUsername()));
         } else {
             messages.add("You are not signed in");
+        }
+        return messages;
+    }
+
+    private List<String> getTicketsMessage(String username){
+        List<String> messages = new LinkedList<>();
+        List<TicketDto> tickets = ticketService.getTicketsByUsername(username);
+        if (tickets.size() == 0) {
+            messages.add("You have not booked any tickets yet");
+        } else {
+            messages.add("Your previous bookings are");
+            List<String> ticketsString = tickets.stream().map(TicketDto::toString).collect(Collectors.toList());
+            messages.addAll(ticketsString);
         }
         return messages;
     }

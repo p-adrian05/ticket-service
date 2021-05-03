@@ -1,4 +1,4 @@
-package com.epam.training.ticketservice.ui.command;
+package com.epam.training.ticketservice.ui.converter;
 
 import com.epam.training.ticketservice.core.booking.model.SeatDto;
 import org.springframework.core.convert.converter.Converter;
