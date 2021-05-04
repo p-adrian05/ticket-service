@@ -23,13 +23,13 @@ public class RoomServiceImplTest {
         .id(1)
         .columns(10)
         .name("A1")
-        .rows(15)
+        .rowsNumber(15)
         .build();
     private static final RoomEntity ROOM_ENTITY_2 = RoomEntity.builder()
         .id(2)
         .columns(13)
         .name("A2")
-        .rows(11)
+        .rowsNumber(11)
         .build();
     public static final RoomDto ROOM_DTO_1 = RoomDto.builder()
         .name("A1")
@@ -74,7 +74,7 @@ public class RoomServiceImplTest {
             .id(null)
             .columns(10)
             .name("A1")
-            .rows(15)
+            .rowsNumber(15)
             .build();
         Mockito.when(roomRepository.existsByName(ROOM_DTO_1.getName())).thenReturn(false);
         Mockito.when(roomRepository.save(roomEntity)).thenReturn(ROOM_ENTITY_1);

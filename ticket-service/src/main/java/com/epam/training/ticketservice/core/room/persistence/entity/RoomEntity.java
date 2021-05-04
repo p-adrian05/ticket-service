@@ -36,7 +36,7 @@ public class RoomEntity {
     @Column(unique = true)
     private String name;
     @Column
-    private int rows;
+    private int rowsNumber;
     @Column
     private int columns;
 

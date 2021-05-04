@@ -51,7 +51,7 @@ public class SeatServiceImpl implements SeatService {
             if (bookedSeatsDto.contains(seatDto)) {
                 throw new BookingException(String.format("Seat %s is already taken", seatDto));
             } else if (!isSeatExists(seatDto.getColumn(), roomEntity.getColumns())
-                || !isSeatExists(seatDto.getRow(), roomEntity.getRows())) {
+                || !isSeatExists(seatDto.getRow(), roomEntity.getRowsNumber())) {
                 throw new BookingException(String.format("Seat %s does not exist in this room", seatDto));
             }
         }

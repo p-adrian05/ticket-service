@@ -68,7 +68,7 @@ public class TicketPriceServiceImplTest {
         .columns(5)
         .name("A1")
         .roomPrices(Set.of(PRICE_ENTITY_EXTRA))
-        .rows(5)
+        .rowsNumber(5)
         .build();
     private static final ScreeningEntity SCREENING_ENTITY = ScreeningEntity
         .builder()

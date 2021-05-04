@@ -45,7 +45,7 @@ public class SeatServiceImplTest {
         .id(1)
         .columns(5)
         .name("A1")
-        .rows(5)
+        .rowsNumber(5)
         .build();
     private static final ScreeningEntity SCREENING_ENTITY = ScreeningEntity
         .builder()

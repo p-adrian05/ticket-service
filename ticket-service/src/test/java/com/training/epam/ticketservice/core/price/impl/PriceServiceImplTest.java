@@ -40,7 +40,7 @@ public class PriceServiceImplTest {
         .id(1)
         .columns(10)
         .name("A1")
-        .rows(15)
+        .rowsNumber(15)
         .build();
     private static final MovieEntity MOVIE_ENTITY = MovieEntity.builder()
         .id(1)

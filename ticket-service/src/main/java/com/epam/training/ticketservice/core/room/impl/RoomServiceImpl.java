@@ -39,7 +39,7 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity roomEntity = RoomEntity.builder()
             .columns(room.getColumns())
             .name(room.getName())
-            .rows(room.getRows())
+            .rowsNumber(room.getRows())
             .build();
         RoomEntity createdRoom = roomRepository.save(roomEntity);
         log.debug("Created room is : {}", createdRoom);
@@ -60,7 +60,7 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity updatedRoomEntity = RoomEntity.builder()
             .columns(room.getColumns())
             .name(room.getName())
-            .rows(room.getRows())
+            .rowsNumber(room.getRows())
             .id(oldRoomEntity.get().getId())
             .build();
         roomRepository.save(updatedRoomEntity);
@@ -88,7 +88,7 @@ public class RoomServiceImpl implements RoomService {
         return RoomDto.builder()
             .columns(roomEntity.getColumns())
             .name(roomEntity.getName())
-            .rows(roomEntity.getRows())
+            .rows(roomEntity.getRowsNumber())
             .build();
     }
 
