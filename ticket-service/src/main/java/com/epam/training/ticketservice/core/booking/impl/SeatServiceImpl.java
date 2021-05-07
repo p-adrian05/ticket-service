@@ -71,45 +71,45 @@ public class SeatServiceImpl implements SeatService {
         Objects.requireNonNull(ticketEntity, "Ticket entity cannot be null for booking seats");
         Objects.requireNonNull(screeningEntity,
             "Ticket's screening entity cannot be null for booking seats");
-        Optional<PriceEntity> priceEntity = getBasePriceEntity();
-        if (isFreeToSeat(seats, screeningEntity) && priceEntity.isPresent()) {
+        PriceEntity priceEntity = getBasePriceEntity();
+        if (isFreeToSeat(seats, screeningEntity)) {
             ticketEntity.setScreeningEntity(screeningEntity);
             Set<SeatEntity> seatEntities = seats.stream().map(seatDto ->
                 SeatEntity.builder()
                     .id(new SeatId(seatDto.getRow(), seatDto.getColumn()))
                     .ticketEntity(ticketEntity)
                     .screeningEntity(ticketEntity.getScreeningEntity())
-                    .priceEntity(priceEntity.get()).build())
+                    .priceEntity(priceEntity).build())
                 .collect(Collectors.toSet());
             log.debug(
                 String.format("Booked Seats: %s to Screening: %s", seatEntities, ticketEntity.getScreeningEntity()));
             seatRepository.saveAll(seatEntities);
-            return Optional.of(calculateSeatPrice(seats));
+            return Optional.of(calculateSeatPrice(seats, moneyFromPriceEntity(priceEntity)));
         }
         return Optional.empty();
     }
 
-
     @Override
     public Money calculateSeatPrice(Set<SeatDto> seats) {
-        Money price = getSeatPrice().multiply(seats.size());
+        return calculateSeatPrice(seats, moneyFromPriceEntity(getBasePriceEntity()));
+    }
+
+    private Money calculateSeatPrice(Set<SeatDto> seats, Money money) {
+        Money price = money.multiply(seats.size());
         log.debug(String.format("Calculated price: %s for seats: %s", price, seats));
         return price;
     }
 
-    private Money getSeatPrice() {
-        Optional<PriceEntity> priceEntity = getBasePriceEntity();
-        return priceEntity.map(entity -> new Money(entity.getValue(), Currency.getInstance(entity.getCurrency())))
-            .orElseGet(() -> new Money(1500, Currency.getInstance("HUF")));
+    private Money moneyFromPriceEntity(PriceEntity priceEntity) {
+        return new Money(priceEntity.getValue(), Currency.getInstance(priceEntity.getCurrency()));
     }
 
-    private Optional<PriceEntity> getBasePriceEntity() {
-        return priceRepository.findByName("Base");
+    private PriceEntity getBasePriceEntity() {
+        return priceRepository.findByName("Base").orElseGet(
+            () -> priceRepository.save(PriceEntity.builder().name("Base").currency("HUF").value(1500).build()));
     }
 
     private boolean isSeatExists(int seatIndex, int max) {
         return seatIndex > 0 && seatIndex <= max;
     }
-
-
 }

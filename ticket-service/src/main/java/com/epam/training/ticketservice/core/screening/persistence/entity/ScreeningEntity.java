@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -59,7 +60,7 @@ public class ScreeningEntity {
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
 
-    @OneToMany(mappedBy = "screeningEntity", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "screeningEntity",  cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats;

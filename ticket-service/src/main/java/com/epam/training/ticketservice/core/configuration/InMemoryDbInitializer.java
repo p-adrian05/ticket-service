@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 
 @Component
 @Generated
-@Profile("! prod")
+@Profile("ci")
 @RequiredArgsConstructor
 public class InMemoryDbInitializer {
 
