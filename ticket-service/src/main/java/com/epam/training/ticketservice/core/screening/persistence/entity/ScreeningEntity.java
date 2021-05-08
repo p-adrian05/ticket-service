@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -55,7 +56,11 @@ public class ScreeningEntity {
     @Column
     private LocalDateTime endTime;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "screenings")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "screening_prices",
+        joinColumns = @JoinColumn(name = "screening_id"),
+        inverseJoinColumns = @JoinColumn(name = "price_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
@@ -76,5 +81,9 @@ public class ScreeningEntity {
         prices.addAll(roomEntity.getRoomPrices());
         prices.addAll(movieEntity.getMoviePrices());
         return prices;
+    }
+
+    public void addPrice(PriceEntity priceEntity) {
+        this.getScreeningPrices().add(priceEntity);
     }
 }

@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -46,7 +47,11 @@ public class MovieEntity {
     @Column
     private int duration;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "movies")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "movie_prices",
+        joinColumns = @JoinColumn(name = "movie_id"),
+        inverseJoinColumns = @JoinColumn(name = "price_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> moviePrices;
@@ -55,5 +60,9 @@ public class MovieEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<ScreeningEntity> screenings;
+
+    public void addPrice(PriceEntity priceEntity) {
+        this.getMoviePrices().add(priceEntity);
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.ui.command;
 
+import com.epam.training.ticketservice.core.price.AttachPriceService;
 import com.epam.training.ticketservice.core.price.PriceService;
 import com.epam.training.ticketservice.core.price.exceptions.AttachPriceException;
 import com.epam.training.ticketservice.core.price.exceptions.PriceAlreadyExistsException;
@@ -23,6 +24,7 @@ import java.util.Currency;
 public class PriceCommand {
 
     private final PriceService priceService;
+    private final AttachPriceService attachPriceService;
     private final UserAvailability userAvailability;
 
     @ShellMethodAvailability("isAvailable")
@@ -63,7 +65,7 @@ public class PriceCommand {
     @ShellMethod(value = "Admin attach price component to room", key = "attach price component to room")
     public String attachPriceToRoom(String name, String roomName) {
         try {
-            priceService.attachRoom(roomName, name);
+            attachPriceService.attachRoom(roomName, name);
         } catch (UnknownPriceException | AttachPriceException e) {
             log.error("Error during attaching price component to room " + e.getMessage());
             return e.getMessage();
@@ -75,7 +77,7 @@ public class PriceCommand {
     @ShellMethod(value = "Admin attach price component to screening", key = "attach price component to screening")
     public String attachPriceToScreening(String name, String movieName, String roomName, LocalDateTime time) {
         try {
-            priceService.attachScreening(BasicScreeningDto.builder()
+            attachPriceService.attachScreening(BasicScreeningDto.builder()
                 .time(time)
                 .movieName(movieName)
                 .roomName(roomName)
@@ -91,7 +93,7 @@ public class PriceCommand {
     @ShellMethod(value = "Admin attach price component to movie", key = "attach price component to movieEntity")
     public String attachPriceToMovie(String name, String movieName) {
         try {
-            priceService.attachMovie(movieName, name);
+            attachPriceService.attachMovie(movieName, name);
         } catch (UnknownPriceException | AttachPriceException e) {
             log.error("Error during attaching price component to movie " + e.getMessage());
             return e.getMessage();

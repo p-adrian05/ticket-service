@@ -16,6 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -40,7 +42,11 @@ public class RoomEntity {
     @Column
     private int columns;
 
-    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "rooms")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "room_prices",
+        joinColumns = @JoinColumn(name = "room_id"),
+        inverseJoinColumns = @JoinColumn(name = "price_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<PriceEntity> roomPrices;
@@ -49,5 +55,9 @@ public class RoomEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<ScreeningEntity> screenings;
+
+    public void addPrice(PriceEntity priceEntity) {
+        this.getRoomPrices().add(priceEntity);
+    }
 
 }

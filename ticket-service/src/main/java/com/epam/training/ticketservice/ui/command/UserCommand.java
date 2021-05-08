@@ -52,7 +52,9 @@ public class UserCommand {
                 userDto.get().getRole().equals(UserEntity.Role.ADMIN)
                     ? String.format("Signed in with privileged account '%s'", userDto.get().getUsername()) :
                     String.format("Signed in with account '%s'", userDto.get().getUsername()));
-            messages.addAll(getTicketsMessage(userDto.get().getUsername()));
+            if (userDto.get().getRole().equals(UserEntity.Role.USER)) {
+                messages.addAll(getTicketsMessage(userDto.get().getUsername()));
+            }
         } else {
             messages.add("You are not signed in");
         }
