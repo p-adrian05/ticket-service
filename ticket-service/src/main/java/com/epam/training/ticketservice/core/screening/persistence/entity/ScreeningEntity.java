@@ -1,6 +1,7 @@
 package com.epam.training.ticketservice.core.screening.persistence.entity;
 
 import com.epam.training.ticketservice.core.booking.persistence.entity.SeatEntity;
+import com.epam.training.ticketservice.core.booking.persistence.entity.TicketEntity;
 import com.epam.training.ticketservice.core.movie.persistence.entity.MovieEntity;
 import com.epam.training.ticketservice.core.room.persistence.entity.RoomEntity;
 import com.epam.training.ticketservice.core.price.persistence.entity.PriceEntity;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -60,10 +60,15 @@ public class ScreeningEntity {
     @ToString.Exclude
     private Set<PriceEntity> screeningPrices;
 
-    @OneToMany(mappedBy = "screeningEntity",  cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "screeningEntity",  orphanRemoval = true, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<SeatEntity> seats;
+
+    @OneToMany(mappedBy = "screeningEntity",  orphanRemoval = true, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<TicketEntity> ticketEntities;
 
     public List<PriceEntity> prices() {
         List<PriceEntity> prices = new LinkedList<>();
