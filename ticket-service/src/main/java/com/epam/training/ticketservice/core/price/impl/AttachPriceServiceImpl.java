@@ -35,6 +35,8 @@ public class AttachPriceServiceImpl implements AttachPriceService {
     @Transactional
     @Override
     public void attachRoom(String roomName, String priceName) throws AttachPriceException, UnknownPriceException {
+        Objects.requireNonNull(roomName, "Room name cannot be null for price attaching");
+        Objects.requireNonNull(priceName, "Price name cannot be null for price attaching");
         Optional<RoomEntity> roomEntity = roomRepository.findByName(roomName);
         if (roomEntity.isPresent()) {
             attachPrice(priceName, roomEntity.get()::addPrice);
@@ -48,6 +50,8 @@ public class AttachPriceServiceImpl implements AttachPriceService {
     @Transactional
     @Override
     public void attachMovie(String movieName, String priceName) throws AttachPriceException, UnknownPriceException {
+        Objects.requireNonNull(movieName, "Movie name cannot be null for price attaching");
+        Objects.requireNonNull(priceName, "Price name cannot be null for price attaching");
         Optional<MovieEntity> movieEntity = movieRepository.findMovieEntityByTitle(movieName);
         if (movieEntity.isPresent()) {
             attachPrice(priceName, movieEntity.get()::addPrice);
@@ -63,6 +67,8 @@ public class AttachPriceServiceImpl implements AttachPriceService {
     @Override
     public void attachScreening(BasicScreeningDto basicScreeningDto, String priceName)
         throws AttachPriceException, UnknownPriceException {
+        Objects.requireNonNull(basicScreeningDto, "ScreeningDto cannot be null for price attaching");
+        Objects.requireNonNull(priceName, "Price name cannot be null for price attaching");
         Optional<ScreeningEntity> screeningEntity =
             screeningRepository.findByMovieEntity_TitleAndAndRoomEntity_NameAndStartTime(
                 basicScreeningDto.getMovieName(), basicScreeningDto.getRoomName(), basicScreeningDto.getTime());
