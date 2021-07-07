@@ -1,28 +1,13 @@
-# A félév végi beadandó program követelményei
-
-Egy interaktív, parancssori alkalmazást fogsz elkészíteni, amely
-adminisztrációs és információs felületként fog működni egy filmszínház
-személyzete és látogatói számára. 
-
 ## Az alkalmazással kapcsolatos követelmények:
-
-### Követelmények a kettes jegyhez:
 
 #### Általános követelmények a forráskóddal és az alkalmazással kapcsolatban
 
-* A forráskód elérhető egy nyilvános repóban
-* Az `mvn clean verify` a sikeresen lefut a `ticket-service-parent` projekten. Ehhez a következők szükségesek
-    * A `@grade2-requirements` tag-gel megjelölt acceptance tesztekben leírt követelményeknek megfelelő alkalmazás.
-    * Legalább 40%-os unit teszt branch és line coverage az egész `ticket-service` modulra vonatkoztatva.
-* A forráskód könnyen kiterjeszthető és követi a clean code és OOP fejlesztésre vonatkozó irányelveket.
-    * Az irányelvektől való eltérést meg kell tudnod indokolni.
-* Az alkalmazás Spring-et használ a DI megvalósításához.
-* Az alkalmazás Spring Data JPA-t használ az adat eléréshez
-    * Ehhez használj egy in-memory, beágyazott (pl. H2) adatbázist
-* Spring Boot használható 
 * A 'Ticket service>' prompt kerül kiírásra, amint az alkalmazás készen áll arra, hogy bemenetet fogadjon a felhasználótól
 * Az alkalmazás a standard kimenetre ír és a standard bemenetről olvas
-
+ Az alkalmazás által használt adatbázis Spring profilok segítségével módosítható.
+    * Alapértelmezetten az alkalmazás egy olyan adatbázist használ, amely az alkalmazás futásai között is megőrzi az állapotát
+    * A `ci` profil esetén az alkalmazás beágyazott in-memory adatbázist használ 
+    * Legalább 70%-os unit teszt branch és line coverage az egész `ticket-service` modulra vonatkoztatva.
 #### Az alkalmazás által támogatott parancsok
 
 * Az alkalmazás állapotát egy interaktív parancssor segítségével lehet módosítani.
@@ -238,33 +223,6 @@ Például:
 Sátántangó (drama, 450 minutes), screened in room Pedersoli, at 2021-03-15 11:00
 ```
 
-### Követelmények a hármas jegyhez
-
-#### Általános követelmények a forráskóddal és az alkalmazással kapcsolatban
-
-* A kettes jegy minden követelménye teljesül
-* Az `mvn clean verify -p requirements-grade3` sikeresen lefut 
-a `ticket-service-parent` projekten. Ehhez a kettes érdemjegy eléréséhez szükséges 
-feltételeken túl a következők szükségesek:
-    * Nincsenek checkstyle warning-ok.
-* Az alkalmazás Spring Shell-t használ.
-
-### Követelmények a négyes jegyhez
-
-#### Általános követelmények a forráskóddal és az alkalmazással kapcsolatban
-
-* A hármas jegy minden követelménye teljesül
-* Az alkalmazás által használt adatbázis Spring profilok segítségével módosítható.
-    * Alapértelmezetten az alkalmazás egy olyan adatbázist használ, amely az alkalmazás futásai között is megőrzi az állapotát
-    * A `ci` profil esetén az alkalmazás beágyazott in-memory adatbázist használ 
-* Az `mvn clean verify -p requirements-grade4` sikeresen lefut 
-a `ticket-service-parent` projekten. Ehhez a hármas érdemjegy eléréséhez szükséges 
-feltételeken túl a következők szükségesek:
-    * Legalább 50%-os unit teszt branch és line coverage az egész `ticket-service` modulra vonatkoztatva.
-    * A `@grade4-requirements` tag-gel megjelölt acceptance tesztekben leírt követelményeknek megfelelő alkalmazás.
-
-#### Az alkalmazás által támogatott parancsok
-
 ##### Regisztráció és bejelentkezés nem adminisztrátor felhasználók számára
 
 ###### Regisztráció nem adminisztrátor felhasználó számára
@@ -352,18 +310,6 @@ book Sátántangó Pedersoli "2021-03-15 10:45" "5,5 5,6"
     * A jegy ára 1500 HUF / ülőhely / vetítés. Az ötös érdemjegyhez tartozó követelményekben 
     további szabályok kerülnek bevezetésre.
 * Ez a parancs csak bejelentkezett, nem adminisztrátor felhasználóknak elérhető
-
-### For grade 5:
-#### Általános követelmények a forráskóddal és az alkalmazással kapcsolatban
-
-* A négyes érdemjegy eléréséhez tartozó összes követelmény teljesül
-* Az `mvn clean verify -p requirements-grade5` sikeresen lefut 
-a `ticket-service-parent` projekten. Ehhez a négyes érdemjegy eléréséhez szükséges 
-feltételeken túl a következők szükségesek:
-    * Legalább 70%-os unit teszt branch és line coverage az egész `ticket-service` modulra vonatkoztatva.
-    * A `@grade5-requirements` tag-gel megjelölt acceptance tesztekben leírt követelményeknek megfelelő alkalmazás.
-
-#### Az alkalmazás által támogatott parancsok
 
 ##### Árazással kapcsolatos funkcionalitás
 
